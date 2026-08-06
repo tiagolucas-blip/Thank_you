@@ -19,3 +19,8 @@
     background: var(--sapTile_Background, var(--sapObjectHeader_Background));
     border: 1px solid var(--sapList_BorderColor);
 }
+
+.thankyouSubcategory {
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--sapList_BorderColor);
+}

@@ -1,6 +1,5 @@
 import BaseController from "./BaseController";
 import JSONModel from "sap/ui/model/json/JSONModel";
-import MessageToast from "sap/m/MessageToast";
 import Fragment from "sap/ui/core/Fragment";
 import Dialog from "sap/m/Dialog";
 import Control from "sap/ui/core/Control";
@@ -11,6 +10,7 @@ import type { Button$PressEvent } from "sap/m/Button";
 import { getRecognitionService } from "../service/ServiceFactory";
 import { getAuthService } from "../service/AuthServiceFactory";
 import { setCurrentDemoIdentity } from "../service/DemoUserStore";
+import NewRecognitionDialog from "./NewRecognitionDialog";
 import type Component from "../Component";
 import type { CategoryRating, Employee, RecognitionCategory, RecognitionRecordView } from "../service/types";
 
@@ -24,7 +24,9 @@ interface GivenRow extends RecognitionRecordView {
 export default class Home extends BaseController {
     private employeesById: Map<string, Employee> = new Map();
     private categoryLabelKeyById: Map<string, string> = new Map();
+    private categories: RecognitionCategory[] = [];
     private detailDialog?: Dialog;
+    private newRecognitionDialog?: NewRecognitionDialog;
 
     public onInit(): void {
         const oModel = new JSONModel({
@@ -55,8 +57,15 @@ export default class Home extends BaseController {
         void oComponent.refreshCurrentUser().then(() => this.loadData());
     }
 
-    public onSendRecognitionPress(): void {
-        MessageToast.show(this.getResourceBundle().getText("sendRecognitionNotAvailableYet") ?? "");
+    public async onSendRecognitionPress(): Promise<void> {
+        const view = this.getView();
+        if (!view) {
+            return;
+        }
+        if (!this.newRecognitionDialog) {
+            this.newRecognitionDialog = new NewRecognitionDialog(this.getResourceBundle(), () => void this.loadData());
+        }
+        await this.newRecognitionDialog.open(view, Array.from(this.employeesById.values()), this.categories);
     }
 
     public onReceivedSearch(oEvent: SearchField$LiveChangeEvent): void {
@@ -127,6 +136,7 @@ export default class Home extends BaseController {
 
         this.indexEmployees(employees);
         this.indexCategories(categories);
+        this.categories = categories;
 
         oModel.setData({
             busy: false,

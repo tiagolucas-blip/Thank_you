@@ -1,0 +1,122 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    core:require="{ formatter: 'com/xpto/thankyou/model/formatter' }"
+>
+    <Dialog
+        id="newRecognitionDialog"
+        title="{i18n>newRecognitionDialogTitle}"
+        contentWidth="42rem"
+        contentHeight="38rem"
+        verticalScrolling="true"
+        busy="{/busy}"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Text text="{i18n>newRecognitionDialogSubtitle}" class="sapUiSmallMarginBottom" />
+
+                <Label text="{i18n>selectEmployeeLabel}" labelFor="recipientInput" required="true" />
+                <Input
+                    id="recipientInput"
+                    value="{/recipientSearch}"
+                    placeholder="{i18n>selectEmployeePlaceholder}"
+                    showSuggestion="true"
+                    suggestionItems="{/employeeSuggestions}"
+                    suggest=".onEmployeeSuggest"
+                    suggestionItemSelected=".onEmployeeSelected"
+                    change=".onRecipientInputChange"
+                    valueState="{/recipientValueState}"
+                    valueStateText="{/recipientValueStateText}"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <suggestionItems>
+                        <core:ListItem key="{id}" text="{name}" additionalText="{orgArea}" />
+                    </suggestionItems>
+                </Input>
+
+                <Label text="{i18n>employeeAreaFilterLabel}" labelFor="orgAreaSelect" />
+                <Select
+                    id="orgAreaSelect"
+                    items="{/orgAreaOptions}"
+                    selectedKey="{/selectedOrgArea}"
+                    change=".onOrgAreaFilterChange"
+                    width="14rem"
+                    class="sapUiSmallMarginBottom"
+                >
+                    <core:Item key="{key}" text="{text}" />
+                </Select>
+
+                <Label text="{i18n>categoriesLabel}" class="sapUiTinyMarginBottom" />
+                <IconTabBar id="categoryTabBar" items="{/categories}" expandable="false" class="sapUiMediumMarginBottom">
+                    <items>
+                        <IconTabFilter key="{id}" text="{path: 'labelKey', formatter: '.formatCategoryLabel'}">
+                            <VBox class="sapUiSmallMargin">
+                                <Label text="{i18n>categoryRatingLabel}" />
+                                <HBox alignItems="Center" gap="0.5rem" class="sapUiTinyMarginBottom">
+                                    <RatingIndicator value="{rating}" maxValue="5" liveChange=".onCategoryRatingChange" change=".onCategoryRatingChange" />
+                                    <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
+                                </HBox>
+                                <Label text="{i18n>categoryObservationsLabel}" />
+                                <TextArea value="{observations}" rows="2" growing="true" width="100%" class="sapUiSmallMarginBottom" />
+
+                                <VBox
+                                    items="{path: 'closedAnswers', templateShareable: false}"
+                                    visible="{= ${closedAnswers}.length > 0 }"
+                                    class="sapUiSmallMarginBottom"
+                                >
+                                    <HBox alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap" width="100%" class="sapUiTinyMarginBottom">
+                                        <Label text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" width="60%" wrapping="true" />
+                                        <Select selectedKey="{answerValue}" items="{path: 'options', templateShareable: false}" width="10rem">
+                                            <core:Item key="{value}" text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" />
+                                        </Select>
+                                    </HBox>
+                                </VBox>
+
+                                <VBox items="{path: 'subcategories', templateShareable: false}" visible="{= ${subcategories}.length > 0 }">
+                                    <VBox class="thankyouSubcategory sapUiTinyMarginTop sapUiTinyMarginBottom">
+                                        <Label text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" class="sapMTextBold" />
+                                        <HBox alignItems="Center" gap="0.5rem" class="sapUiTinyMarginTop">
+                                            <RatingIndicator value="{rating}" maxValue="5" liveChange=".onCategoryRatingChange" change=".onCategoryRatingChange" />
+                                            <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
+                                        </HBox>
+                                        <TextArea value="{observations}" rows="2" growing="true" width="100%" class="sapUiTinyMarginTop" />
+                                    </VBox>
+                                </VBox>
+                            </VBox>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+                <MessageStrip
+                    text="{/categoryRatingError}"
+                    type="Error"
+                    showIcon="true"
+                    visible="{= !!${/categoryRatingError} }"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <Label text="{i18n>finalMessageLabel}" labelFor="finalMessageArea" required="true" />
+                <TextArea
+                    id="finalMessageArea"
+                    value="{/message}"
+                    placeholder="{i18n>finalMessagePlaceholder}"
+                    rows="3"
+                    growing="true"
+                    maxLength="500"
+                    showExceededText="true"
+                    liveChange=".onMessageLiveChange"
+                    change=".onMessageLiveChange"
+                    valueState="{/messageValueState}"
+                    valueStateText="{/messageValueStateText}"
+                    width="100%"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <CheckBox text="{i18n>anonymousCheckboxLabel}" selected="{/isAnonymous}" />
+            </VBox>
+        </content>
+        <buttons>
+            <Button text="{i18n>submitButton}" type="Emphasized" enabled="{/isValid}" press=".onSubmitPress" />
+            <Button text="{i18n>cancelButton}" press=".onCancelPress" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
