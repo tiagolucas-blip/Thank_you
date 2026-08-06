@@ -84,7 +84,8 @@
                 "settings": {
                     "bundleName": "com.xpto.thankyou.i18n.i18n",
                     "supportedLocales": ["", "en", "fr_FR"],
-                    "fallbackLocale": ""
+                    "fallbackLocale": "",
+                    "async": true
                 }
             }
         },

@@ -42,16 +42,21 @@ export const DEMO_IDENTITIES: DemoIdentity[] = [
     }
 ];
 
+/**
+ * Devolve sempre uma cópia — DEMO_IDENTITIES é a fonte de verdade
+ * partilhada e não pode ser mutada por bindings TwoWay (ex.: Select) que
+ * escrevam diretamente nos objetos devolvidos aqui.
+ */
 export function getCurrentDemoIdentity(): DemoIdentity {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     if (stored) {
         const storedEmployeeId = JSON.parse(stored) as { employeeId: string };
         const found = DEMO_IDENTITIES.find((identity) => identity.employee.id === storedEmployeeId.employeeId);
         if (found) {
-            return found;
+            return { role: found.role, employee: { ...found.employee } };
         }
     }
-    return DEMO_IDENTITIES[0];
+    return { role: DEMO_IDENTITIES[0].role, employee: { ...DEMO_IDENTITIES[0].employee } };
 }
 
 export function setCurrentDemoIdentity(employeeId: string): void {

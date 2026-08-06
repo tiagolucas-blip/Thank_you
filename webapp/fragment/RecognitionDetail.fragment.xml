@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    core:require="{ formatter: 'com/xpto/thankyou/model/formatter' }"
+>
+    <Dialog
+        id="recognitionDetailDialog"
+        title="{i18n>detailDialogTitle}"
+        contentWidth="28rem"
+        verticalScrolling="true"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <ObjectAttribute title="{/directionLabel}" text="{/counterpartDisplayName}" />
+                <ObjectAttribute title="{i18n>detailDialogDateLabel}" text="{path: '/createdAt', formatter: 'formatter.shortDate'}" />
+                <ObjectAttribute
+                    title="{i18n>detailDialogOverallRatingLabel}"
+                    text="{path: '/overallRating', formatter: 'formatter.ratingWithMax'}"
+                />
+                <Label text="{i18n>detailDialogMessageLabel}" class="sapUiTinyMarginTop" />
+                <Text text="{/message}" class="sapUiTinyMarginBottom" />
+                <Label text="{i18n>detailDialogCategoryRatingsLabel}" class="sapUiSmallMarginTop" />
+                <List items="{/categoryRatings}" showSeparators="Inner">
+                    <CustomListItem>
+                        <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiTinyMargin">
+                            <Text text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" />
+                            <RatingIndicator value="{rating}" maxValue="5" enabled="false" />
+                        </HBox>
+                    </CustomListItem>
+                </List>
+            </VBox>
+        </content>
+        <buttons>
+            <Button text="{i18n>detailDialogCloseButton}" press=".onDetailDialogClose" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,1 +1,21 @@
-/* Estilos globais da aplicação Thank You — vazio na Fase 2, preenchido conforme necessário nas fases seguintes. */
+/* Estilos globais da aplicação Thank You */
+
+.thankyouCard {
+    height: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--sapTile_Background, var(--sapObjectHeader_Background));
+    border: 1px solid var(--sapList_BorderColor);
+    text-align: center;
+}
+
+.thankyouKpiTile {
+    flex: 0 0 auto;
+}
+
+.thankyouListPanel {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background: var(--sapTile_Background, var(--sapObjectHeader_Background));
+    border: 1px solid var(--sapList_BorderColor);
+}

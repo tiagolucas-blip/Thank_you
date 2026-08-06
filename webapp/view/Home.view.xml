@@ -2,12 +2,190 @@
     controllerName="com.xpto.thankyou.controller.Home"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    core:require="{ formatter: 'com/xpto/thankyou/model/formatter' }"
 >
-    <MessagePage
-        id="homePlaceholder"
-        text="{i18n>homePlaceholderTitle}"
-        description="{i18n>homePlaceholderDescription}"
-        icon="sap-icon://feedback"
-        showHeader="false"
-    />
+    <Page id="homePage" busy="{home>/busy}">
+        <customHeader>
+            <OverflowToolbar id="homeHeaderBar">
+                <Title text="{i18n>appTitle}" level="H1" />
+                <ToolbarSpacer />
+                <ObjectStatus text="{i18n>demoModeNotice}" state="Warning" visible="{app>/isDemoMode}" />
+                <Select
+                    id="demoUserSelect"
+                    visible="{app>/isDemoMode}"
+                    items="{app>/demoIdentities}"
+                    selectedKey="{path: 'app>/currentUser/employee/id', mode: 'OneWay'}"
+                    change=".onDemoUserChange"
+                    ariaLabelledBy="demoUserSelectLabel"
+                    width="12rem"
+                >
+                    <core:Item key="{app>id}" text="{app>name}" />
+                </Select>
+                <Avatar displaySize="S" initials="{path: 'app>/currentUser/employee/name', formatter: 'formatter.initials'}" />
+                <VBox>
+                    <Text text="{app>/currentUser/employee/name}" class="sapMTextBold" />
+                    <Text text="{path: 'app>/currentUser/role', formatter: '.formatRoleLabel'}" />
+                </VBox>
+            </OverflowToolbar>
+        </customHeader>
+
+        <content>
+            <VBox class="sapUiResponsiveMargin" id="homeContent">
+                <Label id="demoUserSelectLabel" text="{i18n>demoUserSelectLabel}" visible="false" />
+
+                <!-- Top Performers -->
+                <Title text="{i18n>topPerformersTitle}" level="H2" class="sapUiSmallMarginBottom" />
+                <MessageStrip
+                    text="{i18n>topPerformersEmpty}"
+                    type="Information"
+                    showIcon="true"
+                    visible="{= ${home>/topPerformers}.length === 0 }"
+                    class="sapUiSmallMarginBottom"
+                />
+                <HBox id="topPerformersBox" items="{home>/topPerformers}" wrap="Wrap" class="sapUiMediumMarginBottom" gap="1rem">
+                    <VBox class="thankyouCard" alignItems="Center" justifyContent="Center" width="220px">
+                        <Avatar displaySize="M" initials="{path: 'home>employee/name', formatter: 'formatter.initials'}" />
+                        <Text text="{home>employee/name}" class="sapMTextBold sapUiTinyMarginTop" />
+                        <RatingIndicator value="{home>averageRating}" maxValue="5" enabled="false" class="sapUiTinyMarginTop" />
+                        <Text text="{path: 'home>averageRating', formatter: 'formatter.ratingWithMax'}" />
+                        <Text text="{path: 'home>recognitionCount', formatter: '.formatTopPerformerCount'}" />
+                    </VBox>
+                </HBox>
+
+                <!-- A minha área -->
+                <Title text="{i18n>myAreaTitle}" level="H2" class="sapUiSmallMarginBottom" />
+                <HBox alignItems="Center" wrap="Wrap" class="sapUiMediumMarginBottom" gap="1rem">
+                    <GenericTile
+                        class="thankyouKpiTile"
+                        header="{i18n>kpiReceivedLabel}"
+                        frameType="TwoByOne"
+                    >
+                        <TileContent>
+                            <NumericContent value="{home>/kpis/receivedCount}" withMargin="false" />
+                        </TileContent>
+                    </GenericTile>
+                    <GenericTile
+                        class="thankyouKpiTile"
+                        header="{i18n>kpiGivenLabel}"
+                        frameType="TwoByOne"
+                    >
+                        <TileContent>
+                            <NumericContent value="{home>/kpis/givenCount}" withMargin="false" />
+                        </TileContent>
+                    </GenericTile>
+                    <GenericTile
+                        class="thankyouKpiTile"
+                        header="{i18n>kpiAverageLabel}"
+                        frameType="TwoByOne"
+                    >
+                        <TileContent>
+                            <NumericContent value="{home>/kpis/averagePercent}" withMargin="false" />
+                        </TileContent>
+                    </GenericTile>
+                    <Button
+                        id="sendRecognitionButton"
+                        text="{i18n>sendRecognitionButton}"
+                        type="Emphasized"
+                        press=".onSendRecognitionPress"
+                    />
+                </HBox>
+
+                <!-- Duas listas lado a lado, empilham em ecrã pequeno -->
+                <l:Grid defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="1">
+                    <VBox class="thankyouListPanel">
+                        <Title text="{i18n>receivedListTitle}" level="H3" class="sapUiTinyMarginBottom" />
+                        <SearchField
+                            id="receivedSearchField"
+                            placeholder="{i18n>searchPlaceholder}"
+                            liveChange=".onReceivedSearch"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <Table
+                            id="receivedTable"
+                            items="{home>/received}"
+                            noDataText="{i18n>emptyReceivedList}"
+                        >
+                            <columns>
+                                <Column><Text text="{i18n>columnAuthor}" /></Column>
+                                <Column><Text text="{i18n>columnMessage}" /></Column>
+                                <Column hAlign="Center"><Text text="{i18n>columnDate}" /></Column>
+                                <Column hAlign="Center"><Text text="{i18n>columnRating}" /></Column>
+                                <Column hAlign="Center" />
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <HBox alignItems="Center" gap="0.5rem">
+                                            <Avatar
+                                                displaySize="XS"
+                                                initials="{parts: [{path: 'home>author/name'}, {path: 'home>isAnonymous'}], formatter: 'formatter.avatarInitials'}"
+                                                src="{parts: [{path: 'home>author/name'}, {path: 'home>isAnonymous'}], formatter: 'formatter.avatarIcon'}"
+                                            />
+                                            <Text
+                                                text="{parts: [{path: 'home>author/name'}, {path: 'i18n>anonymousAuthor'}], formatter: 'formatter.authorDisplayName'}"
+                                            />
+                                        </HBox>
+                                        <Text text="{path: 'home>message', formatter: 'formatter.truncate'}" />
+                                        <Text text="{path: 'home>createdAt', formatter: 'formatter.shortDate'}" />
+                                        <Text text="{path: 'home>overallRating', formatter: 'formatter.ratingWithMax'}" />
+                                        <Button
+                                            text="{i18n>viewDetailButton}"
+                                            type="Transparent"
+                                            press=".onViewDetailReceived"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </VBox>
+
+                    <VBox class="thankyouListPanel">
+                        <Title text="{i18n>givenListTitle}" level="H3" class="sapUiTinyMarginBottom" />
+                        <SearchField
+                            id="givenSearchField"
+                            placeholder="{i18n>searchPlaceholder}"
+                            liveChange=".onGivenSearch"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <Table
+                            id="givenTable"
+                            items="{home>/given}"
+                            noDataText="{i18n>emptyGivenList}"
+                        >
+                            <columns>
+                                <Column><Text text="{i18n>columnRecipient}" /></Column>
+                                <Column><Text text="{i18n>columnMessage}" /></Column>
+                                <Column hAlign="Center"><Text text="{i18n>columnDate}" /></Column>
+                                <Column hAlign="Center"><Text text="{i18n>columnRating}" /></Column>
+                                <Column hAlign="Center" />
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <HBox alignItems="Center" gap="0.5rem">
+                                            <Avatar
+                                                displaySize="XS"
+                                                initials="{path: 'home>recipientName', formatter: 'formatter.initials'}"
+                                            />
+                                            <Text text="{home>recipientName}" />
+                                        </HBox>
+                                        <Text text="{path: 'home>message', formatter: 'formatter.truncate'}" />
+                                        <Text text="{path: 'home>createdAt', formatter: 'formatter.shortDate'}" />
+                                        <Text text="{path: 'home>overallRating', formatter: 'formatter.ratingWithMax'}" />
+                                        <Button
+                                            text="{i18n>viewDetailButton}"
+                                            type="Transparent"
+                                            press=".onViewDetailGiven"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </VBox>
+                </l:Grid>
+            </VBox>
+        </content>
+    </Page>
 </mvc:View>

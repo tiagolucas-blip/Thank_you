@@ -1,5 +1,8 @@
 import type IRecognitionService from "./IRecognitionService";
 import { DATA_SOURCE } from "./runtimeConfig.generated";
+import MockRecognitionService from "./mock/MockRecognitionService";
+import VercelApiRecognitionService from "./vercel/VercelApiRecognitionService";
+import ODataRecognitionService from "./odata/ODataRecognitionService";
 
 let instance: IRecognitionService | undefined;
 
@@ -15,22 +18,16 @@ export async function getRecognitionService(): Promise<IRecognitionService> {
     }
 
     switch (DATA_SOURCE) {
-        case "vercel-api": {
-            const { default: VercelApiRecognitionService } = await import("./vercel/VercelApiRecognitionService");
+        case "vercel-api":
             instance = new VercelApiRecognitionService();
             break;
-        }
-        case "odata": {
-            const { default: ODataRecognitionService } = await import("./odata/ODataRecognitionService");
+        case "odata":
             instance = new ODataRecognitionService();
             break;
-        }
         case "mock":
-        default: {
-            const { default: MockRecognitionService } = await import("./mock/MockRecognitionService");
+        default:
             instance = new MockRecognitionService();
             break;
-        }
     }
 
     return instance;
