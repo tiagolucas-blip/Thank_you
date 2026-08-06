@@ -22,16 +22,20 @@ Cliente de referência nesta documentação e nos dados de seed: **XPTO** (fict�
 
 ```bash
 npm install
-npm start        # ui5 serve, abre index.html
-npm run lint      # eslint
-npm run ts:check  # tsc --noEmit
-npm run build     # ui5 build --all --clean-dest → dist/
-npm test          # karma + qunit (a partir da Fase 3 tem testes reais)
+npm start          # gera runtimeConfig, ui5 serve, abre index.html
+npm run lint       # eslint (webapp + api)
+npm run ts:check   # tsc --noEmit (webapp) + tsc --noEmit -p tsconfig.api.json (api)
+npm run build      # ui5 build --all --clean-dest → dist/
+npm test           # test:api (node --test, api/_lib) + test:webapp (karma + QUnit, webapp/test)
 ```
+
+`npm test` cobre os testes obrigatórios da regra de auto-elogio (requisito 5) e da anonimização (requisito 4), ao nível do serviço, nas duas implementações (`api/_lib/*.test.ts` para `vercel-api`, `webapp/test/unit/service/*.qunit.js` para `mock`).
 
 ## Variáveis de ambiente
 
 Ver `.env.example`. Nenhum segredo em código — tudo lido por variável de ambiente, com a app a nunca chamar plataforma diretamente a partir de controllers (sempre através de `webapp/service/`).
+
+`DATA_SOURCE` e `AUTH_MODE` são lidas uma vez em build-time por `scripts/generate-runtime-config.mjs` (a SPA é estática, sem servidor a cada pedido) e gravadas em `webapp/service/runtimeConfig.generated.ts`, consumido só por `ServiceFactory.ts`/`AuthServiceFactory.ts`.
 
 ## Deploy em Vercel
 

@@ -1,0 +1,323 @@
+// Duplicado deliberadamente de api/_data/recognitionRecords.json — ver
+// nota em employees.ts.
+import type { StoredRecognitionRecord } from "../../service/mock/types";
+
+export const recognitionRecords: StoredRecognitionRecord[] = [
+    {
+        id: "REC0001",
+        authorId: "00000002",
+        recipientId: "00000004",
+        isAnonymous: false,
+        message: "Entregou o projeto de integração antes do prazo, com qualidade impecável.",
+        categoryRatings: [
+            {
+                categoryId: "CAT001",
+                rating: 5,
+                observations: "Entrega antecipada e sem defeitos."
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ001",
+                answerValue: "true"
+            }
+        ],
+        overallRating: 5,
+        createdAt: "2026-01-10T10:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0002",
+        authorId: "00000004",
+        recipientId: "00000002",
+        isAnonymous: true,
+        message: "Sempre pronto a ajudar a equipa mesmo fora do seu módulo.",
+        categoryRatings: [
+            {
+                categoryId: "CAT004",
+                rating: 4
+            },
+            {
+                categoryId: "CAT002",
+                rating: 5
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 4.5,
+        createdAt: "2026-01-22T14:30:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0003",
+        authorId: "00000009",
+        recipientId: "00000001",
+        isAnonymous: false,
+        message: "Superou os objetivos de vendas do trimestre.",
+        categoryRatings: [
+            {
+                categoryId: "CAT001",
+                rating: 4
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ001",
+                answerValue: "true"
+            }
+        ],
+        overallRating: 4,
+        createdAt: "2026-02-05T09:15:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0004",
+        authorId: "00000001",
+        recipientId: "00000007",
+        isAnonymous: false,
+        message: "Ótima colaboração entre equipas na campanha de fim de trimestre.",
+        categoryRatings: [
+            {
+                categoryId: "CAT003",
+                rating: 5
+            },
+            {
+                categoryId: "CAT006",
+                rating: 5,
+                observations: "Coordenou muito bem com o Marketing."
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ002",
+                answerValue: "CONSTANT"
+            }
+        ],
+        overallRating: 5,
+        createdAt: "2026-02-14T11:45:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0005",
+        authorId: "00000007",
+        recipientId: "00000009",
+        isAnonymous: false,
+        message: "Boa organização da agenda da equipa durante o período de férias.",
+        categoryRatings: [
+            {
+                categoryId: "CAT005",
+                rating: 3
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 3,
+        createdAt: "2026-02-28T16:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0006",
+        authorId: "00000005",
+        recipientId: "00000011",
+        isAnonymous: true,
+        message: "Assumiu a liderança do processo de recrutamento sem ser pedido.",
+        categoryRatings: [
+            {
+                categoryId: "CAT002",
+                rating: 5
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 5,
+        createdAt: "2026-03-03T08:30:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0007",
+        authorId: "00000006",
+        recipientId: "00000005",
+        isAnonymous: false,
+        message: "Proatividade na resolução de um problema urgente de RH.",
+        categoryRatings: [
+            {
+                categoryId: "CAT004",
+                rating: 4
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 4,
+        createdAt: "2026-03-19T13:20:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0008",
+        authorId: "00000008",
+        recipientId: "00000010",
+        isAnonymous: false,
+        message: "Entrega de alta qualidade e muito bem organizada.",
+        categoryRatings: [
+            {
+                categoryId: "CAT001",
+                rating: 5
+            },
+            {
+                categoryId: "CAT005",
+                rating: 4
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ001",
+                answerValue: "true"
+            }
+        ],
+        overallRating: 4.5,
+        createdAt: "2026-04-02T10:10:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0009",
+        authorId: "00000010",
+        recipientId: "00000008",
+        isAnonymous: false,
+        message: "Grande espírito de equipa durante o sprint mais difícil do ano.",
+        categoryRatings: [
+            {
+                categoryId: "CAT003",
+                rating: 4
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ002",
+                answerValue: "REGULAR"
+            }
+        ],
+        overallRating: 4,
+        createdAt: "2026-04-16T09:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0010",
+        authorId: "00000003",
+        recipientId: "00000009",
+        isAnonymous: false,
+        message: "Resolveu uma reclamação complexa com muito profissionalismo.",
+        categoryRatings: [
+            {
+                categoryId: "CAT002",
+                rating: 5
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 5,
+        createdAt: "2026-05-05T15:40:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0011",
+        authorId: "00000009",
+        recipientId: "00000003",
+        isAnonymous: true,
+        message: "Iniciativa exemplar no apoio a um cliente difícil.",
+        categoryRatings: [
+            {
+                categoryId: "CAT004",
+                rating: 5
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 5,
+        createdAt: "2026-05-20T12:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0012",
+        authorId: "00000002",
+        recipientId: "00000008",
+        isAnonymous: false,
+        message: "Bom desempenho técnico no módulo de faturação.",
+        categoryRatings: [
+            {
+                categoryId: "CAT001",
+                rating: 3
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ001",
+                answerValue: "false"
+            }
+        ],
+        overallRating: 3,
+        createdAt: "2026-06-08T17:25:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0013",
+        authorId: "00000011",
+        recipientId: "00000006",
+        isAnonymous: false,
+        message: "Excelente gestão de tempo na campanha de marketing do semestre.",
+        categoryRatings: [
+            {
+                categoryId: "CAT005",
+                rating: 4
+            },
+            {
+                categoryId: "CAT002",
+                rating: 4
+            }
+        ],
+        closedAnswers: [],
+        overallRating: 4,
+        createdAt: "2026-06-25T11:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0014",
+        authorId: "00000006",
+        recipientId: "00000001",
+        isAnonymous: false,
+        message: "Sempre disponível para colaborar entre departamentos.",
+        categoryRatings: [
+            {
+                categoryId: "CAT003",
+                rating: 5
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ002",
+                answerValue: "CONSTANT"
+            }
+        ],
+        overallRating: 5,
+        createdAt: "2026-07-11T14:00:00Z",
+        status: "SUBMITTED"
+    },
+    {
+        id: "REC0015",
+        authorId: "00000001",
+        recipientId: "00000009",
+        isAnonymous: false,
+        message: "Motivação e resultados consistentes à frente da equipa de vendas.",
+        categoryRatings: [
+            {
+                categoryId: "CAT001",
+                rating: 4
+            },
+            {
+                categoryId: "CAT004",
+                rating: 4
+            }
+        ],
+        closedAnswers: [
+            {
+                closedQuestionId: "CQ001",
+                answerValue: "true"
+            }
+        ],
+        overallRating: 4,
+        createdAt: "2026-07-30T10:30:00Z",
+        status: "SUBMITTED"
+    }
+];

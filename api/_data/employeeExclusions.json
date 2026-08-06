@@ -1,0 +1,10 @@
+[
+    {
+        "id": "EXC0001",
+        "employeeId": "00000012",
+        "reason": "Colaborador inativo — conta suspensa",
+        "createdBy": "00000011",
+        "createdAt": "2026-01-15T09:00:00Z",
+        "active": true
+    }
+]

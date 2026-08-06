@@ -1,32 +1,38 @@
 {
-  "name": "thank-you",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Thank You — plataforma de reconhecimento público entre colaboradores (XPTO, mockup)",
-  "license": "UNLICENSED",
-  "scripts": {
-    "start": "ui5 serve --open index.html",
-    "build": "ui5 build --all --clean-dest",
-    "lint": "eslint webapp test",
-    "lint:fix": "eslint webapp test --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "ts:check": "tsc --noEmit",
-    "test": "karma start karma.conf.js --single-run"
-  },
-  "devDependencies": {
-    "@openui5/types": "1.151.0",
-    "@ui5/cli": "4.0.60",
-    "eslint": "10.8.0",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-ui5": "0.1.0",
-    "globals": "17.9.0",
-    "karma": "6.4.4",
-    "karma-ui5": "4.1.0",
-    "prettier": "3.9.6",
-    "qunit": "2.26.0",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.66.0",
-    "ui5-tooling-transpile": "3.12.0"
-  }
+    "name": "thank-you",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Thank You — plataforma de reconhecimento público entre colaboradores (XPTO, mockup)",
+    "license": "UNLICENSED",
+    "scripts": {
+        "start": "node scripts/generate-runtime-config.mjs && ui5 serve --open index.html",
+        "prebuild": "node scripts/generate-runtime-config.mjs",
+        "build": "ui5 build --all --clean-dest",
+        "postinstall": "node scripts/generate-runtime-config.mjs",
+        "lint": "eslint webapp api",
+        "lint:fix": "eslint webapp api --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "ts:check": "tsc --noEmit && tsc --noEmit -p tsconfig.api.json",
+        "test": "npm run test:api && npm run test:webapp",
+        "test:webapp": "node scripts/generate-runtime-config.mjs && karma start karma.conf.js --single-run",
+        "test:api": "node --experimental-strip-types --test api/_lib/*.test.ts"
+    },
+    "devDependencies": {
+        "@openui5/types": "1.151.0",
+        "@types/node": "22.20.1",
+        "@ui5/cli": "4.0.60",
+        "@vercel/node": "5.9.5",
+        "eslint": "10.8.0",
+        "eslint-config-prettier": "10.1.8",
+        "eslint-plugin-ui5": "0.1.0",
+        "globals": "17.9.0",
+        "karma": "6.4.4",
+        "karma-chrome-launcher": "3.2.0",
+        "karma-ui5": "4.1.0",
+        "prettier": "3.9.6",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.66.0",
+        "ui5-tooling-transpile": "3.12.0"
+    }
 }

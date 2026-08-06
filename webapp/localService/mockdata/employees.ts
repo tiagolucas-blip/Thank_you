@@ -1,0 +1,117 @@
+// Duplicado deliberadamente de api/_data/*.json — usado só pela
+// implementação mock (DATA_SOURCE=mock), que corre inteiramente no
+// browser sem rede. webapp/ não pode depender de código de api/
+// (CLAUDE.md secção 10); ambos os conjuntos de seed têm de ser mantidos
+// alinhados manualmente enquanto não existir um backend real.
+import type { Employee } from "../../service/types";
+
+export const employees: Employee[] = [
+    {
+        id: "00000001",
+        name: "Ana Ferreira",
+        orgArea: "Vendas",
+        photoUrl: "",
+        email: "ana.ferreira@xpto.example",
+        managerId: "00000009",
+        active: true
+    },
+    {
+        id: "00000002",
+        name: "Bruno Costa",
+        orgArea: "Engenharia",
+        photoUrl: "",
+        email: "bruno.costa@xpto.example",
+        managerId: "00000010",
+        active: true
+    },
+    {
+        id: "00000003",
+        name: "Carla Mendes",
+        orgArea: "Apoio ao Cliente",
+        photoUrl: "",
+        email: "carla.mendes@xpto.example",
+        managerId: "00000009",
+        active: true
+    },
+    {
+        id: "00000004",
+        name: "Diogo Pinto",
+        orgArea: "Engenharia",
+        photoUrl: "",
+        email: "diogo.pinto@xpto.example",
+        managerId: "00000010",
+        active: true
+    },
+    {
+        id: "00000005",
+        name: "Elsa Rodrigues",
+        orgArea: "Recursos Humanos",
+        photoUrl: "",
+        email: "elsa.rodrigues@xpto.example",
+        managerId: "00000011",
+        active: true
+    },
+    {
+        id: "00000006",
+        name: "Filipe Santos",
+        orgArea: "Marketing",
+        photoUrl: "",
+        email: "filipe.santos@xpto.example",
+        managerId: "00000011",
+        active: true
+    },
+    {
+        id: "00000007",
+        name: "Gabriela Nunes",
+        orgArea: "Vendas",
+        photoUrl: "",
+        email: "gabriela.nunes@xpto.example",
+        managerId: "00000009",
+        active: true
+    },
+    {
+        id: "00000008",
+        name: "Hugo Almeida",
+        orgArea: "Engenharia",
+        photoUrl: "",
+        email: "hugo.almeida@xpto.example",
+        managerId: "00000010",
+        active: true
+    },
+    {
+        id: "00000009",
+        name: "Inês Carvalho",
+        orgArea: "Vendas",
+        photoUrl: "",
+        email: "ines.carvalho@xpto.example",
+        managerId: null,
+        active: true
+    },
+    {
+        id: "00000010",
+        name: "João Sousa",
+        orgArea: "Engenharia",
+        photoUrl: "",
+        email: "joao.sousa@xpto.example",
+        managerId: null,
+        active: true
+    },
+    {
+        id: "00000011",
+        name: "Leonor Cardoso",
+        orgArea: "Recursos Humanos",
+        photoUrl: "",
+        email: "leonor.cardoso@xpto.example",
+        managerId: null,
+        active: true
+    },
+    {
+        id: "00000012",
+        name: "Marta Teixeira",
+        orgArea: "Apoio ao Cliente",
+        photoUrl: "",
+        email: "marta.teixeira@xpto.example",
+        managerId: "00000009",
+        active: false
+    }
+];

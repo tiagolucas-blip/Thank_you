@@ -1,129 +1,129 @@
 {
-  "_version": "1.60.0",
-  "sap.app": {
-    "id": "com.xpto.thankyou",
-    "type": "application",
-    "i18n": {
-      "bundleUrl": "i18n/i18n.properties",
-      "supportedLocales": ["", "en", "fr_FR"],
-      "fallbackLocale": ""
-    },
-    "applicationVersion": {
-      "version": "0.1.0"
-    },
-    "title": "{{appTitle}}",
-    "description": "{{appDescription}}",
-    "tags": {
-      "keywords": ["recognition", "thank-you", "xpto"]
-    },
-    "dataSources": {
-      "mainService": {
-        "uri": "/api/",
-        "type": "JSON",
-        "settings": {
-          "vercelApiRoot": "/api/",
-          "note": "Em BTP substitui-se por um serviço OData V4 (CAP). A troca é de URI/tipo aqui, não de código consumidor — ver docs/migracao-btp.md."
-        }
-      }
-    },
-    "crossNavigation": {
-      "inbounds": {
-        "thankYouHome": {
-          "semanticObject": "ThankYou",
-          "action": "display",
-          "signature": {
-            "parameters": {},
-            "additionalParameters": "allowed"
-          },
-          "title": "{{appTitle}}",
-          "icon": "sap-icon://feedback"
+    "_version": "1.60.0",
+    "sap.app": {
+        "id": "com.xpto.thankyou",
+        "type": "application",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": ["", "en", "fr_FR"],
+            "fallbackLocale": ""
         },
-        "thankYouAdmin": {
-          "semanticObject": "ThankYou",
-          "action": "manageDashboard",
-          "signature": {
-            "parameters": {},
-            "additionalParameters": "allowed"
-          },
-          "title": "{{adminDashboardTitle}}",
-          "icon": "sap-icon://business-objects-experience"
+        "applicationVersion": {
+            "version": "0.1.0"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "tags": {
+            "keywords": ["recognition", "thank-you", "xpto"]
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/api/",
+                "type": "JSON",
+                "settings": {
+                    "vercelApiRoot": "/api/",
+                    "note": "Em BTP substitui-se por um serviço OData V4 (CAP). A troca é de URI/tipo aqui, não de código consumidor — ver docs/migracao-btp.md."
+                }
+            }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "thankYouHome": {
+                    "semanticObject": "ThankYou",
+                    "action": "display",
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    },
+                    "title": "{{appTitle}}",
+                    "icon": "sap-icon://feedback"
+                },
+                "thankYouAdmin": {
+                    "semanticObject": "ThankYou",
+                    "action": "manageDashboard",
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    },
+                    "title": "{{adminDashboardTitle}}",
+                    "icon": "sap-icon://business-objects-experience"
+                }
+            }
         }
-      }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "sap-icon://feedback"
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        },
+        "fullWidth": true
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.151.0",
+            "libs": {
+                "sap.ui.core": {},
+                "sap.m": {},
+                "sap.f": {},
+                "sap.ui.layout": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "com.xpto.thankyou.i18n.i18n",
+                    "supportedLocales": ["", "en", "fr_FR"],
+                    "fallbackLocale": ""
+                }
+            }
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+        "rootView": {
+            "viewName": "com.xpto.thankyou.view.App",
+            "type": "XML",
+            "id": "app"
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "type": "View",
+                "viewType": "XML",
+                "path": "com.xpto.thankyou.view",
+                "controlId": "app",
+                "controlAggregation": "pages",
+                "transition": "slide",
+                "async": true
+            },
+            "routes": [
+                {
+                    "pattern": "",
+                    "name": "home",
+                    "target": "home"
+                }
+            ],
+            "targets": {
+                "home": {
+                    "viewName": "Home",
+                    "viewLevel": 1
+                }
+            }
+        }
     }
-  },
-  "sap.ui": {
-    "technology": "UI5",
-    "icons": {
-      "icon": "sap-icon://feedback"
-    },
-    "deviceTypes": {
-      "desktop": true,
-      "tablet": true,
-      "phone": true
-    },
-    "fullWidth": true
-  },
-  "sap.ui5": {
-    "flexEnabled": true,
-    "dependencies": {
-      "minUI5Version": "1.151.0",
-      "libs": {
-        "sap.ui.core": {},
-        "sap.m": {},
-        "sap.f": {},
-        "sap.ui.layout": {}
-      }
-    },
-    "contentDensities": {
-      "compact": true,
-      "cozy": true
-    },
-    "models": {
-      "i18n": {
-        "type": "sap.ui.model.resource.ResourceModel",
-        "settings": {
-          "bundleName": "com.xpto.thankyou.i18n.i18n",
-          "supportedLocales": ["", "en", "fr_FR"],
-          "fallbackLocale": ""
-        }
-      }
-    },
-    "resources": {
-      "css": [
-        {
-          "uri": "css/style.css"
-        }
-      ]
-    },
-    "rootView": {
-      "viewName": "com.xpto.thankyou.view.App",
-      "type": "XML",
-      "id": "app"
-    },
-    "routing": {
-      "config": {
-        "routerClass": "sap.m.routing.Router",
-        "type": "View",
-        "viewType": "XML",
-        "path": "com.xpto.thankyou.view",
-        "controlId": "app",
-        "controlAggregation": "pages",
-        "transition": "slide",
-        "async": true
-      },
-      "routes": [
-        {
-          "pattern": "",
-          "name": "home",
-          "target": "home"
-        }
-      ],
-      "targets": {
-        "home": {
-          "viewName": "Home",
-          "viewLevel": 1
-        }
-      }
-    }
-  }
 }

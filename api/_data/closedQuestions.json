@@ -1,0 +1,22 @@
+[
+    {
+        "id": "CQ001",
+        "categoryId": "CAT001",
+        "code": "MET_GOALS",
+        "labelKey": "closedQuestionMetGoals",
+        "answerType": "BOOLEAN",
+        "options": [],
+        "order": 1,
+        "active": true
+    },
+    {
+        "id": "CQ002",
+        "categoryId": "CAT003",
+        "code": "COLLAB_FREQUENCY",
+        "labelKey": "closedQuestionCollabFrequency",
+        "answerType": "SINGLE_CHOICE",
+        "options": ["OCCASIONAL", "REGULAR", "CONSTANT"],
+        "order": 1,
+        "active": true
+    }
+]

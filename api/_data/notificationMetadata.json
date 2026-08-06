@@ -1,0 +1,29 @@
+[
+    {
+        "id": "NM001",
+        "eventType": "RECOGNITION_RECEIVED",
+        "channel": "EMAIL",
+        "templateKey": "emailRecognitionReceived",
+        "subjectKey": "emailRecognitionReceivedSubject",
+        "recipientsRule": "RECIPIENT",
+        "active": true
+    },
+    {
+        "id": "NM002",
+        "eventType": "RECOGNITION_RECEIVED",
+        "channel": "TEAMS",
+        "templateKey": "teamsRecognitionReceived",
+        "subjectKey": "teamsRecognitionReceivedSubject",
+        "recipientsRule": "RECIPIENT",
+        "active": true
+    },
+    {
+        "id": "NM003",
+        "eventType": "RECOGNITION_SUBMITTED",
+        "channel": "EMAIL",
+        "templateKey": "emailRecognitionSubmittedConfirmation",
+        "subjectKey": "emailRecognitionSubmittedConfirmationSubject",
+        "recipientsRule": "AUTHOR",
+        "active": true
+    }
+]

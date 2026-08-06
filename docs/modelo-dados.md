@@ -98,76 +98,86 @@ erDiagram
 ## 2. Entidades
 
 ### Employee (lida do backend de RH — não é MDF custom, é a entidade Person/EC)
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | equivalente a `personIdExternal` em EC |
-| name | string | |
-| orgArea | string | área organizacional |
-| photoUrl | string | |
-| email | string | |
-| managerId | string (FK Employee, nullable) | |
-| active | boolean | |
+
+| Campo     | Tipo                           | Nota                                   |
+| --------- | ------------------------------ | -------------------------------------- |
+| id        | string (PK)                    | equivalente a `personIdExternal` em EC |
+| name      | string                         |                                        |
+| orgArea   | string                         | área organizacional                    |
+| photoUrl  | string                         |                                        |
+| email     | string                         |                                        |
+| managerId | string (FK Employee, nullable) |                                        |
+| active    | boolean                        |                                        |
 
 ### EmployeeExclusion (config)
+
 Colaboradores excluídos da plataforma — aplicados no serviço ao construir a lista de pesquisa (requisito 1), nunca só filtrados na UI.
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | |
-| employeeId | string (FK Employee) | |
-| reason | string | |
-| createdBy | string (FK Employee) | admin que criou a exclusão |
-| createdAt | datetime | |
-| active | boolean | |
+
+| Campo      | Tipo                 | Nota                       |
+| ---------- | -------------------- | -------------------------- |
+| id         | string (PK)          |                            |
+| employeeId | string (FK Employee) |                            |
+| reason     | string               |                            |
+| createdBy  | string (FK Employee) | admin que criou a exclusão |
+| createdAt  | datetime             |                            |
+| active     | boolean              |                            |
 
 ### RecognitionCategory (config)
+
 Categorias e subcategorias de reconhecimento, dados de configuração — nunca hardcoded na UI (IconTabBar lê daqui).
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | |
-| code | string | chave de negócio, ex. `PERFORMANCE` |
-| labelKey | string | chave i18n |
+
+| Campo            | Tipo                                      | Nota                                                  |
+| ---------------- | ----------------------------------------- | ----------------------------------------------------- |
+| id               | string (PK)                               |                                                       |
+| code             | string                                    | chave de negócio, ex. `PERFORMANCE`                   |
+| labelKey         | string                                    | chave i18n                                            |
 | parentCategoryId | string (FK RecognitionCategory, nullable) | `null` = categoria de topo; preenchido = subcategoria |
-| order | int | ordem de apresentação |
-| active | boolean | |
+| order            | int                                       | ordem de apresentação                                 |
+| active           | boolean                                   |                                                       |
 
 ### ClosedQuestion (config)
+
 Questões fechadas associadas a uma categoria — apresentadas no dialog, dentro do tab da categoria correspondente.
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | |
-| categoryId | string (FK RecognitionCategory) | |
-| code | string | |
-| labelKey | string | |
-| answerType | string | `BOOLEAN` \| `SINGLE_CHOICE` |
-| options | string | JSON de opções, só relevante para `SINGLE_CHOICE` |
-| order | int | |
-| active | boolean | |
+
+| Campo      | Tipo                            | Nota                                              |
+| ---------- | ------------------------------- | ------------------------------------------------- |
+| id         | string (PK)                     |                                                   |
+| categoryId | string (FK RecognitionCategory) |                                                   |
+| code       | string                          |                                                   |
+| labelKey   | string                          |                                                   |
+| answerType | string                          | `BOOLEAN` \| `SINGLE_CHOICE`                      |
+| options    | string                          | JSON de opções, só relevante para `SINGLE_CHOICE` |
+| order      | int                             |                                                   |
+| active     | boolean                         |                                                   |
 
 ### NotificationMetadata (config)
+
 Configuração de metadados para envio de notificações (email/Teams).
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | |
-| eventType | string | ex. `RECOGNITION_RECEIVED` |
-| channel | string | `EMAIL` \| `TEAMS` |
-| templateKey | string | |
-| subjectKey | string | chave i18n do assunto |
-| recipientsRule | string | `RECIPIENT` \| `AUTHOR` \| `MANAGER_OF_RECIPIENT` \| `ADMIN` |
-| active | boolean | |
+
+| Campo          | Tipo        | Nota                                                         |
+| -------------- | ----------- | ------------------------------------------------------------ |
+| id             | string (PK) |                                                              |
+| eventType      | string      | ex. `RECOGNITION_RECEIVED`                                   |
+| channel        | string      | `EMAIL` \| `TEAMS`                                           |
+| templateKey    | string      |                                                              |
+| subjectKey     | string      | chave i18n do assunto                                        |
+| recipientsRule | string      | `RECIPIENT` \| `AUTHOR` \| `MANAGER_OF_RECIPIENT` \| `ADMIN` |
+| active         | boolean     |                                                              |
 
 ### RecognitionRecord (registo transacional)
-| Campo | Tipo | Nota |
-|---|---|---|
-| id | string (PK) | |
-| authorId | string (FK Employee) | **persiste sempre**, ver regra de anonimato abaixo |
-| recipientId | string (FK Employee) | nunca pode ser igual a `authorId` — regra de auto-elogio, validada no serviço |
-| isAnonymous | boolean | |
-| message | string | mensagem final |
-| categoryRatings | composição | `{ categoryId, rating (1–5), observations }[]` |
-| closedAnswers | composição | `{ closedQuestionId, answerValue }[]` |
-| overallRating | decimal | média de `categoryRatings[].rating` |
-| createdAt | datetime | |
-| status | string | `SUBMITTED` (sem workflow de aprovação — reconhecimento é direto) |
+
+| Campo           | Tipo                 | Nota                                                                          |
+| --------------- | -------------------- | ----------------------------------------------------------------------------- |
+| id              | string (PK)          |                                                                               |
+| authorId        | string (FK Employee) | **persiste sempre**, ver regra de anonimato abaixo                            |
+| recipientId     | string (FK Employee) | nunca pode ser igual a `authorId` — regra de auto-elogio, validada no serviço |
+| isAnonymous     | boolean              |                                                                               |
+| message         | string               | mensagem final                                                                |
+| categoryRatings | composição           | `{ categoryId, rating (1–5), observations }[]`                                |
+| closedAnswers   | composição           | `{ closedQuestionId, answerValue }[]`                                         |
+| overallRating   | decimal              | média de `categoryRatings[].rating`                                           |
+| createdAt       | datetime             |                                                                               |
+| status          | string               | `SUBMITTED` (sem workflow de aprovação — reconhecimento é direto)             |
 
 ## 3. Regra de anonimato (requisito 4)
 
@@ -179,6 +189,6 @@ Configuração de metadados para envio de notificações (email/Teams).
 ## 4. Regra de auto-elogio (requisito 5)
 
 - `recipientId !== authorId`, validado:
-  1. No frontend (dialog), como feedback imediato inline.
-  2. No serviço, como guarda final — uma regra só em frontend é contornável por chamada direta à API.
+    1. No frontend (dialog), como feedback imediato inline.
+    2. No serviço, como guarda final — uma regra só em frontend é contornável por chamada direta à API.
 - Testada ao nível do serviço (Fase 3), não só QUnit de UI.

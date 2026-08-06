@@ -23,11 +23,25 @@ export default tseslint.config(
             "ui5/no-global-name": "error",
             "ui5/no-for-in": "error",
             "ui5/no-boolean-literal-compare": "warn",
-            "no-console": "warn"
+            "no-console": "warn",
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }]
         }
     },
     {
-        files: ["test/**/*.js"],
+        files: ["api/**/*.ts"],
+        extends: [...tseslint.configs.recommended],
+        languageOptions: {
+            globals: {
+                ...globals.node
+            }
+        },
+        rules: {
+            "no-console": "warn",
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }]
+        }
+    },
+    {
+        files: ["webapp/test/**/*.js"],
         languageOptions: {
             globals: {
                 ...globals.browser,
