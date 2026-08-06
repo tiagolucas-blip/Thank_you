@@ -24,7 +24,12 @@
                     <CustomListItem>
                         <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUiTinyMargin">
                             <Text text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" />
-                            <RatingIndicator value="{rating}" maxValue="5" enabled="false" />
+                            <RatingIndicator
+                                value="{rating}"
+                                maxValue="5"
+                                enabled="false"
+                                tooltip="{path: 'labelKey', formatter: '.formatCategoryLabel'}"
+                            />
                         </HBox>
                     </CustomListItem>
                 </List>

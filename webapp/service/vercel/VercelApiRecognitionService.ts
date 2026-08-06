@@ -9,6 +9,7 @@ import type {
     TopPerformerEntry
 } from "../types";
 import { getAuthService } from "../AuthServiceFactory";
+import { ServiceError } from "../errors";
 
 async function demoHeaders(): Promise<Record<string, string>> {
     const currentUser = await getAuthService().getCurrentUser();
@@ -21,12 +22,11 @@ async function demoHeaders(): Promise<Record<string, string>> {
 async function requestJson<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = { ...(await demoHeaders()), ...(init.headers ?? {}) };
     const response = await fetch(path, { ...init, headers });
-    const body = (await response.json()) as T | { error: string };
+    const body = (await response.json()) as T | { error: string; field?: string };
 
     if (!response.ok) {
-        const message =
-            "error" in (body as { error?: string }) ? (body as { error: string }).error : response.statusText;
-        throw new Error(message);
+        const errorBody = body as { error?: string; field?: string };
+        throw new ServiceError(errorBody.error ?? "internalError", errorBody.field);
     }
     return body as T;
 }

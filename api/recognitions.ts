@@ -74,7 +74,7 @@ function handlePost(req: VercelRequest, res: VercelResponse): void {
         const body = req.body as Partial<RecognitionSubmission>;
 
         if (typeof body.recipientId !== "string") {
-            throw new ValidationError("recipientId", "recipientId é obrigatório.");
+            throw new ValidationError("recipientId", "recipientRequired", "recipientId é obrigatório.");
         }
 
         const submission: RecognitionSubmission = {

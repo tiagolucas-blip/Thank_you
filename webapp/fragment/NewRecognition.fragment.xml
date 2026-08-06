@@ -53,11 +53,24 @@
                             <VBox class="sapUiSmallMargin">
                                 <Label text="{i18n>categoryRatingLabel}" />
                                 <HBox alignItems="Center" gap="0.5rem" class="sapUiTinyMarginBottom">
-                                    <RatingIndicator value="{rating}" maxValue="5" liveChange=".onCategoryRatingChange" change=".onCategoryRatingChange" />
+                                    <RatingIndicator
+                                        value="{rating}"
+                                        maxValue="5"
+                                        tooltip="{path: 'labelKey', formatter: '.formatCategoryRatingTooltip'}"
+                                        liveChange=".onCategoryRatingChange"
+                                        change=".onCategoryRatingChange"
+                                    />
                                     <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
                                 </HBox>
                                 <Label text="{i18n>categoryObservationsLabel}" />
-                                <TextArea value="{observations}" rows="2" growing="true" width="100%" class="sapUiSmallMarginBottom" />
+                                <TextArea
+                                    value="{observations}"
+                                    tooltip="{path: 'labelKey', formatter: '.formatObservationsTooltip'}"
+                                    rows="2"
+                                    growing="true"
+                                    width="100%"
+                                    class="sapUiSmallMarginBottom"
+                                />
 
                                 <VBox
                                     items="{path: 'closedAnswers', templateShareable: false}"
@@ -66,7 +79,12 @@
                                 >
                                     <HBox alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap" width="100%" class="sapUiTinyMarginBottom">
                                         <Label text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" width="60%" wrapping="true" />
-                                        <Select selectedKey="{answerValue}" items="{path: 'options', templateShareable: false}" width="10rem">
+                                        <Select
+                                            selectedKey="{answerValue}"
+                                            items="{path: 'options', templateShareable: false}"
+                                            tooltip="{path: 'labelKey', formatter: '.formatCategoryLabel'}"
+                                            width="10rem"
+                                        >
                                             <core:Item key="{value}" text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" />
                                         </Select>
                                     </HBox>
@@ -76,10 +94,23 @@
                                     <VBox class="thankyouSubcategory sapUiTinyMarginTop sapUiTinyMarginBottom">
                                         <Label text="{path: 'labelKey', formatter: '.formatCategoryLabel'}" class="sapMTextBold" />
                                         <HBox alignItems="Center" gap="0.5rem" class="sapUiTinyMarginTop">
-                                            <RatingIndicator value="{rating}" maxValue="5" liveChange=".onCategoryRatingChange" change=".onCategoryRatingChange" />
+                                            <RatingIndicator
+                                                value="{rating}"
+                                                maxValue="5"
+                                                tooltip="{path: 'labelKey', formatter: '.formatCategoryRatingTooltip'}"
+                                                liveChange=".onCategoryRatingChange"
+                                                change=".onCategoryRatingChange"
+                                            />
                                             <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
                                         </HBox>
-                                        <TextArea value="{observations}" rows="2" growing="true" width="100%" class="sapUiTinyMarginTop" />
+                                        <TextArea
+                                            value="{observations}"
+                                            tooltip="{path: 'labelKey', formatter: '.formatObservationsTooltip'}"
+                                            rows="2"
+                                            growing="true"
+                                            width="100%"
+                                            class="sapUiTinyMarginTop"
+                                        />
                                     </VBox>
                                 </VBox>
                             </VBox>

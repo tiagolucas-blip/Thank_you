@@ -12,6 +12,8 @@ import type { RatingIndicator$LiveChangeEvent } from "sap/m/RatingIndicator";
 import type { Button$PressEvent } from "sap/m/Button";
 import { getRecognitionService } from "../service/ServiceFactory";
 import { validateRecognitionForm } from "../service/validation";
+import { ServiceError } from "../service/errors";
+import { getTelemetryService } from "../service/TelemetryServiceFactory";
 import type {
     ClosedQuestion,
     Employee,
@@ -64,6 +66,20 @@ const CLOSED_OPTION_LABEL_KEYS: Record<string, string> = {
     OCCASIONAL: "closedQuestionOptionOccasional",
     REGULAR: "closedQuestionOptionRegular",
     CONSTANT: "closedQuestionOptionConstant"
+};
+
+/**
+ * Mapa código de erro do serviço (mock/vercel-api, ver
+ * webapp/service/errors.ts) -> chave i18n. Um código sem entrada aqui cai
+ * no fallback genérico "recognitionSubmitFailed" — nunca se mostra
+ * error.message (não traduzido) diretamente ao utilizador.
+ */
+const SUBMIT_ERROR_MESSAGE_KEYS: Record<string, string> = {
+    recipientRequired: "recipientRequiredError",
+    selfRecognitionNotAllowed: "selfRecognitionNotAllowedError",
+    messageRequired: "messageRequiredError",
+    categoryRatingRequired: "categoryRatingRequiredError",
+    categoryRatingRange: "categoryRatingRangeError"
 };
 
 function buildClosedQuestionOptions(question: ClosedQuestion): ClosedAnswerOption[] {
@@ -201,6 +217,26 @@ export default class NewRecognitionDialog {
         return this.resourceBundle.getText(labelKey) ?? labelKey;
     }
 
+    /**
+     * Nome acessível do RatingIndicator/TextArea de cada categoria (via
+     * tooltip): os controlos são gerados por template, sem id próprio, por
+     * isso labelFor/ariaLabelledBy não é possível — o tooltip funciona como
+     * nome acessível de fallback (ver WCAG 2.1 AA — Fase 7).
+     */
+    public formatCategoryRatingTooltip(labelKey: string | undefined): string {
+        return this.combineWithCategoryLabel("categoryRatingLabel", labelKey);
+    }
+
+    public formatObservationsTooltip(labelKey: string | undefined): string {
+        return this.combineWithCategoryLabel("categoryObservationsLabel", labelKey);
+    }
+
+    private combineWithCategoryLabel(prefixKey: string, labelKey: string | undefined): string {
+        const categoryLabel = this.formatCategoryLabel(labelKey);
+        const prefix = this.resourceBundle.getText(prefixKey) ?? "";
+        return categoryLabel ? `${prefix}: ${categoryLabel}` : prefix;
+    }
+
     public async onSubmitPress(_oEvent: Button$PressEvent): Promise<void> {
         if (!this.recomputeValidity()) {
             return;
@@ -236,12 +272,18 @@ export default class NewRecognitionDialog {
             const service = await getRecognitionService();
             await service.submitRecognition(submission);
 
+            getTelemetryService().recordEvent("recognition_submitted", {
+                isAnonymous: submission.isAnonymous,
+                categoryCount: categoryRatings.length
+            });
             MessageToast.show(this.resourceBundle.getText("recognitionSubmittedSuccess") ?? "");
             this.dialog?.close();
             this.onSubmitted();
         } catch (error) {
-            const message =
-                error instanceof Error ? error.message : (this.resourceBundle.getText("recognitionSubmitFailed") ?? "");
+            const code = error instanceof ServiceError ? error.code : "unknown";
+            getTelemetryService().recordError("recognition_submit_failed", error, { code });
+            const messageKey = error instanceof ServiceError ? SUBMIT_ERROR_MESSAGE_KEYS[error.code] : undefined;
+            const message = this.resourceBundle.getText(messageKey ?? "recognitionSubmitFailed") ?? "";
             MessageToast.show(message);
         } finally {
             this.model.setProperty("/busy", false);
@@ -256,6 +298,13 @@ export default class NewRecognitionDialog {
         const service = await getRecognitionService();
         const suggestions = await service.searchEmployees({ search, orgArea: orgArea || undefined });
         this.model.setProperty("/employeeSuggestions", suggestions);
+
+        if (search) {
+            getTelemetryService().recordEvent("employee_search", {
+                queryLength: search.length,
+                resultCount: suggestions.length
+            });
+        }
     }
 
     private buildOrgAreaOptions(employees: Employee[]): Array<{ key: string; text: string }> {

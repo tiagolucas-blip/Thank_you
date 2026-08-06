@@ -11,6 +11,7 @@ import type {
 import { getAuthService } from "../AuthServiceFactory";
 import { toAuthorView } from "../anonymize";
 import { isSelfRecognition } from "../validation";
+import { ServiceError } from "../errors";
 import { employees } from "../../localService/mockdata/employees";
 import { employeeExclusions } from "../../localService/mockdata/employeeExclusions";
 import { recognitionCategoriesFlat } from "../../localService/mockdata/recognitionCategories";
@@ -105,10 +106,13 @@ export default class MockRecognitionService implements IRecognitionService {
         const currentUser = await getAuthService().getCurrentUser();
 
         if (isSelfRecognition(currentUser.employee.id, submission.recipientId)) {
-            throw new Error("Não é possível reconhecer-se a si próprio.");
+            throw new ServiceError("selfRecognitionNotAllowed", "recipientId");
         }
         if (!submission.categoryRatings.length) {
-            throw new Error("Pelo menos uma categoria tem de ser classificada.");
+            throw new ServiceError("categoryRatingRequired", "categoryRatings");
+        }
+        if (submission.categoryRatings.some((entry) => entry.rating < 1 || entry.rating > 5)) {
+            throw new ServiceError("categoryRatingRange", "categoryRatings");
         }
 
         const overallRating =
@@ -154,7 +158,7 @@ export default class MockRecognitionService implements IRecognitionService {
     public async getDashboardMetrics(year: number): Promise<DashboardMetrics> {
         const currentUser = await getAuthService().getCurrentUser();
         if (currentUser.role !== "ADMIN") {
-            throw new Error("Esta operação requer o papel ADMIN.");
+            throw new ServiceError("adminRoleRequired");
         }
 
         const recordsInYear = records.filter((record) => new Date(record.createdAt).getUTCFullYear() === year);
@@ -209,7 +213,7 @@ export default class MockRecognitionService implements IRecognitionService {
     public async getRecentRecognitions(search?: string): Promise<RecognitionRecordView[]> {
         const currentUser = await getAuthService().getCurrentUser();
         if (currentUser.role !== "ADMIN") {
-            throw new Error("Esta operação requer o papel ADMIN.");
+            throw new ServiceError("adminRoleRequired");
         }
 
         const term = search?.trim().toLowerCase() ?? "";

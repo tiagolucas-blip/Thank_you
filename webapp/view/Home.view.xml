@@ -55,7 +55,13 @@
                     <VBox class="thankyouCard" alignItems="Center" justifyContent="Center" width="220px">
                         <Avatar displaySize="M" initials="{path: 'home>employee/name', formatter: 'formatter.initials'}" />
                         <Text text="{home>employee/name}" class="sapMTextBold sapUiTinyMarginTop" />
-                        <RatingIndicator value="{home>averageRating}" maxValue="5" enabled="false" class="sapUiTinyMarginTop" />
+                        <RatingIndicator
+                            value="{home>averageRating}"
+                            maxValue="5"
+                            enabled="false"
+                            tooltip="{path: 'home>averageRating', formatter: 'formatter.ratingWithMax'}"
+                            class="sapUiTinyMarginTop"
+                        />
                         <Text text="{path: 'home>averageRating', formatter: 'formatter.ratingWithMax'}" />
                         <Text text="{path: 'home>recognitionCount', formatter: '.formatTopPerformerCount'}" />
                     </VBox>

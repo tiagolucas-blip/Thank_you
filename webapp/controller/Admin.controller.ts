@@ -6,6 +6,7 @@ import type { Select$ChangeEvent } from "sap/m/Select";
 import type { SearchField$LiveChangeEvent } from "sap/m/SearchField";
 import { getRecognitionService } from "../service/ServiceFactory";
 import { getAuthService } from "../service/AuthServiceFactory";
+import { getTelemetryService } from "../service/TelemetryServiceFactory";
 import { buildBarChart, buildDonutChart } from "../model/charts";
 import type { DashboardMetrics, RecognitionRecordView, TopPerformerEntry } from "../service/types";
 
@@ -89,13 +90,19 @@ export default class Admin extends BaseController {
         const oModel = this.getAdminModel();
         oModel.setProperty("/busy", true);
 
-        await Promise.all([
-            this.loadDashboard(Number.parseInt(oModel.getProperty("/selectedYear") as string, 10)),
-            this.loadTopPerformers(),
-            this.loadRecent("")
-        ]);
-
-        oModel.setProperty("/busy", false);
+        try {
+            await Promise.all([
+                this.loadDashboard(Number.parseInt(oModel.getProperty("/selectedYear") as string, 10)),
+                this.loadTopPerformers(),
+                this.loadRecent("")
+            ]);
+            getTelemetryService().recordPageView("admin_dashboard", { role: "ADMIN" });
+        } catch (error) {
+            getTelemetryService().recordError("admin_dashboard_load_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        } finally {
+            oModel.setProperty("/busy", false);
+        }
     }
 
     private async loadTopPerformers(): Promise<void> {

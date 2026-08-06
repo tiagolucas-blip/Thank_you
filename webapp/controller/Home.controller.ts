@@ -4,11 +4,13 @@ import Fragment from "sap/ui/core/Fragment";
 import Dialog from "sap/m/Dialog";
 import Control from "sap/ui/core/Control";
 import Event from "sap/ui/base/Event";
+import MessageToast from "sap/m/MessageToast";
 import type { Select$ChangeEvent } from "sap/m/Select";
 import type { SearchField$LiveChangeEvent } from "sap/m/SearchField";
 import type { Button$PressEvent } from "sap/m/Button";
 import { getRecognitionService } from "../service/ServiceFactory";
 import { getAuthService } from "../service/AuthServiceFactory";
+import { getTelemetryService } from "../service/TelemetryServiceFactory";
 import { setCurrentDemoIdentity } from "../service/DemoUserStore";
 import NewRecognitionDialog from "./NewRecognitionDialog";
 import type Component from "../Component";
@@ -127,30 +129,38 @@ export default class Home extends BaseController {
         const oModel = this.getHomeModel();
         oModel.setProperty("/busy", true);
 
-        const service = await getRecognitionService();
-        const currentUser = await getAuthService().getCurrentUser();
+        try {
+            const service = await getRecognitionService();
+            const currentUser = await getAuthService().getCurrentUser();
 
-        const [employees, categories, topPerformers, received, given] = await Promise.all([
-            service.searchEmployees({}),
-            service.getCategories(),
-            service.getTopPerformers(),
-            service.getReceivedRecognitions(currentUser.employee.id, oModel.getProperty("/receivedSearch")),
-            service.getGivenRecognitions(currentUser.employee.id, oModel.getProperty("/givenSearch"))
-        ]);
+            const [employees, categories, topPerformers, received, given] = await Promise.all([
+                service.searchEmployees({}),
+                service.getCategories(),
+                service.getTopPerformers(),
+                service.getReceivedRecognitions(currentUser.employee.id, oModel.getProperty("/receivedSearch")),
+                service.getGivenRecognitions(currentUser.employee.id, oModel.getProperty("/givenSearch"))
+            ]);
 
-        this.indexEmployees(employees);
-        this.indexCategories(categories);
-        this.categories = categories;
+            this.indexEmployees(employees);
+            this.indexCategories(categories);
+            this.categories = categories;
 
-        oModel.setData({
-            busy: false,
-            topPerformers,
-            received,
-            given: this.withRecipientNames(given),
-            receivedSearch: oModel.getProperty("/receivedSearch") ?? "",
-            givenSearch: oModel.getProperty("/givenSearch") ?? "",
-            kpis: this.computeKpis(received, given)
-        });
+            oModel.setData({
+                busy: false,
+                topPerformers,
+                received,
+                given: this.withRecipientNames(given),
+                receivedSearch: oModel.getProperty("/receivedSearch") ?? "",
+                givenSearch: oModel.getProperty("/givenSearch") ?? "",
+                kpis: this.computeKpis(received, given)
+            });
+
+            getTelemetryService().recordPageView("home", { role: currentUser.role });
+        } catch (error) {
+            getTelemetryService().recordError("home_load_failed", error);
+            oModel.setProperty("/busy", false);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private async reloadReceived(search: string): Promise<void> {

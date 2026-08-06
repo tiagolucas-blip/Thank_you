@@ -3,9 +3,12 @@ import type { UserRole } from "./types.ts";
 import { findEmployeeById } from "./store.ts";
 
 export class AuthorizationError extends Error {
-    constructor(message: string) {
+    public readonly code: string;
+
+    constructor(code: string, message: string) {
         super(message);
         this.name = "AuthorizationError";
+        this.code = code;
     }
 }
 
@@ -26,11 +29,11 @@ export function getRequestUser(req: VercelRequest): RequestUser {
     const role = req.headers["x-demo-role"];
 
     if (typeof employeeId !== "string" || (role !== "EMPLOYEE" && role !== "ADMIN")) {
-        throw new AuthorizationError("Utilizador de demonstração em falta ou inválido.");
+        throw new AuthorizationError("demoUserInvalid", "Utilizador de demonstração em falta ou inválido.");
     }
 
     if (!findEmployeeById(employeeId)) {
-        throw new AuthorizationError("Utilizador de demonstração desconhecido.");
+        throw new AuthorizationError("demoUserUnknown", "Utilizador de demonstração desconhecido.");
     }
 
     return { employeeId, role };
@@ -42,6 +45,6 @@ export function getRequestUser(req: VercelRequest): RequestUser {
  */
 export function requireRole(user: RequestUser, role: UserRole): void {
     if (user.role !== role) {
-        throw new AuthorizationError(`Esta operação requer o papel ${role}.`);
+        throw new AuthorizationError(`${role.toLowerCase()}RoleRequired`, `Esta operação requer o papel ${role}.`);
     }
 }
