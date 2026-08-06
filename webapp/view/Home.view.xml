@@ -1,0 +1,13 @@
+<mvc:View
+    controllerName="com.xpto.thankyou.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+>
+    <MessagePage
+        id="homePlaceholder"
+        text="{i18n>homePlaceholderTitle}"
+        description="{i18n>homePlaceholderDescription}"
+        icon="sap-icon://feedback"
+        showHeader="false"
+    />
+</mvc:View>

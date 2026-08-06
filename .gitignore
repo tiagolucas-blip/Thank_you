@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.env
+.env.local
+*.log
+npm-debug.log*
+coverage/
+.DS_Store
+webapp/resources/
+webapp/test-resources/
