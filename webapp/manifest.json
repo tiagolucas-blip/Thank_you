@@ -117,12 +117,21 @@
                     "pattern": "",
                     "name": "home",
                     "target": "home"
+                },
+                {
+                    "pattern": "admin",
+                    "name": "admin",
+                    "target": "admin"
                 }
             ],
             "targets": {
                 "home": {
                     "viewName": "Home",
                     "viewLevel": 1
+                },
+                "admin": {
+                    "viewName": "Admin",
+                    "viewLevel": 2
                 }
             }
         }

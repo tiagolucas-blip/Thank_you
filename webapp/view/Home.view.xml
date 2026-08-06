@@ -23,6 +23,13 @@
                 >
                     <core:Item key="{app>id}" text="{app>name}" />
                 </Select>
+                <Button
+                    icon="sap-icon://business-objects-experience"
+                    type="Transparent"
+                    tooltip="{i18n>goToAdminDashboardTooltip}"
+                    visible="{= ${app>/currentUser/role} === 'ADMIN' }"
+                    press=".onGoToAdminPress"
+                />
                 <Avatar displaySize="S" initials="{path: 'app>/currentUser/employee/name', formatter: 'formatter.initials'}" />
                 <VBox>
                     <Text text="{app>/currentUser/employee/name}" class="sapMTextBold" />
@@ -81,7 +88,7 @@
                         frameType="TwoByOne"
                     >
                         <TileContent>
-                            <NumericContent value="{home>/kpis/averagePercent}" withMargin="false" />
+                            <NumericContent value="{home>/kpis/averagePercent}" scale="%" withMargin="false" />
                         </TileContent>
                     </GenericTile>
                     <Button

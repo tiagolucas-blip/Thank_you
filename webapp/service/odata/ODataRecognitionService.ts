@@ -53,4 +53,8 @@ export default class ODataRecognitionService implements IRecognitionService {
     public async getDashboardMetrics(_year: number): Promise<DashboardMetrics> {
         throw new Error(NOT_IMPLEMENTED);
     }
+
+    public async getRecentRecognitions(_search?: string): Promise<RecognitionRecordView[]> {
+        throw new Error(NOT_IMPLEMENTED);
+    }
 }

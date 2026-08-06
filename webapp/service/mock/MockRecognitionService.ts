@@ -206,6 +206,20 @@ export default class MockRecognitionService implements IRecognitionService {
         };
     }
 
+    public async getRecentRecognitions(search?: string): Promise<RecognitionRecordView[]> {
+        const currentUser = await getAuthService().getCurrentUser();
+        if (currentUser.role !== "ADMIN") {
+            throw new Error("Esta operação requer o papel ADMIN.");
+        }
+
+        const term = search?.trim().toLowerCase() ?? "";
+        return records
+            .map((record) => toView(record))
+            .filter((view) => !term || (view.author?.name ?? "").toLowerCase().includes(term))
+            .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+            .slice(0, 30);
+    }
+
     private aggregateByRecipient(): TopPerformerEntry[] {
         const countByRecipient = new Map<string, number>();
         const ratingSumByRecipient = new Map<string, number>();

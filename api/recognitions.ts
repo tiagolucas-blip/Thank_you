@@ -23,15 +23,27 @@ export default function handler(req: VercelRequest, res: VercelResponse): void {
 function handleGet(req: VercelRequest, res: VercelResponse): void {
     try {
         const user = getRequestUser(req);
-        const employeeId = typeof req.query.employeeId === "string" ? req.query.employeeId : user.employeeId;
-        const direction = req.query.direction === "given" ? "given" : "received";
+        const direction =
+            req.query.direction === "given" ? "given" : req.query.direction === "all" ? "all" : "received";
         const search = typeof req.query.search === "string" ? req.query.search.trim().toLowerCase() : "";
+        const employeesById = new Map(listEmployees().map((employee) => [employee.id, employee]));
 
+        if (direction === "all") {
+            requireRole(user, "ADMIN");
+            const views = listRecognitionRecords()
+                .map((record) => toRecognitionRecordView(record, employeesById))
+                .filter((view) => !search || (view.author?.name ?? "").toLowerCase().includes(search))
+                .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+                .slice(0, 30);
+            sendJson(res, 200, { recognitions: views });
+            return;
+        }
+
+        const employeeId = typeof req.query.employeeId === "string" ? req.query.employeeId : user.employeeId;
         if (employeeId !== user.employeeId) {
             requireRole(user, "ADMIN");
         }
 
-        const employeesById = new Map(listEmployees().map((employee) => [employee.id, employee]));
         const records = listRecognitionRecords().filter((record) =>
             direction === "received" ? record.recipientId === employeeId : record.authorId === employeeId
         );

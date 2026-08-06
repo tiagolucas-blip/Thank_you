@@ -84,6 +84,17 @@ export default class VercelApiRecognitionService implements IRecognitionService 
         return requestJson<DashboardMetrics>(`/api/dashboard-metrics?year=${year}`);
     }
 
+    public async getRecentRecognitions(search?: string): Promise<RecognitionRecordView[]> {
+        const query = new URLSearchParams({ direction: "all" });
+        if (search) {
+            query.set("search", search);
+        }
+        const { recognitions } = await requestJson<{ recognitions: RecognitionRecordView[] }>(
+            `/api/recognitions?${query.toString()}`
+        );
+        return recognitions;
+    }
+
     private async getRecognitions(
         employeeId: string,
         direction: "received" | "given",

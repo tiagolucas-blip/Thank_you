@@ -23,4 +23,6 @@ export default interface IRecognitionService {
     getTopPerformers(): Promise<TopPerformerEntry[]>;
     getPublicCounters(): Promise<Record<string, number>>;
     getDashboardMetrics(year: number): Promise<DashboardMetrics>;
+    /** Só ADMIN (requisito 10) — últimos reconhecimentos de todos os colaboradores, para o dashboard (secção 4.3). */
+    getRecentRecognitions(search?: string): Promise<RecognitionRecordView[]>;
 }

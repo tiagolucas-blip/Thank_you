@@ -39,7 +39,7 @@ export default class Home extends BaseController {
             kpis: {
                 receivedCount: 0,
                 givenCount: 0,
-                averagePercent: "0%"
+                averagePercent: 0
             }
         });
         this.getView()?.setModel(oModel, "home");
@@ -55,6 +55,10 @@ export default class Home extends BaseController {
         setCurrentDemoIdentity(employeeId);
         const oComponent = this.getOwnerComponent() as Component;
         void oComponent.refreshCurrentUser().then(() => this.loadData());
+    }
+
+    public onGoToAdminPress(): void {
+        this.getRouter().navTo("admin");
     }
 
     public async onSendRecognitionPress(): Promise<void> {
@@ -237,7 +241,7 @@ export default class Home extends BaseController {
         return {
             receivedCount: received.length,
             givenCount: given.length,
-            averagePercent: `${Math.round((averageRating / 5) * 1000) / 10}%`
+            averagePercent: Math.round((averageRating / 5) * 1000) / 10
         };
     }
 
