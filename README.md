@@ -12,7 +12,7 @@ Cliente de referência nesta documentação e nos dados de seed: **XPTO** (fict�
 - Vercel Functions em `/api`, espelhando os futuros iFlows do SAP Integration Suite.
 - ESLint (`eslint-plugin-ui5`) + Prettier, QUnit + OPA5 para testes.
 
-> **Nota:** `karma-ui5` está deprecado a montante (sem sucessor único indicado — o projeto aponta para os pacotes de testing da comunidade UI5). Mantido nesta fase por ser a opção mais documentada; a reavaliar quando a Fase 7/8 escrever os journeys OPA5 reais.
+> **Nota:** `karma-ui5` está deprecado a montante (sem sucessor único indicado — o projeto aponta para os pacotes de testing da comunidade UI5). Mantido nesta fase por ser a opção mais documentada. Os journeys OPA5 reais não foram escritos nas 8 fases entregues — verificação funcional feita por interação real (Playwright) em cada fase, ver `docs/rastreabilidade-requisitos.md`; OPA5 fica assinalado como trabalho futuro, não lacuna escondida.
 
 ## Requisitos
 
@@ -35,13 +35,13 @@ npm test           # test:api (node --test, api/_lib) + test:webapp (karma + QUn
 
 Ver `.env.example`. Nenhum segredo em código — tudo lido por variável de ambiente, com a app a nunca chamar plataforma diretamente a partir de controllers (sempre através de `webapp/service/`).
 
-`DATA_SOURCE` e `AUTH_MODE` são lidas uma vez em build-time por `scripts/generate-runtime-config.mjs` (a SPA é estática, sem servidor a cada pedido) e gravadas em `webapp/service/runtimeConfig.generated.ts`, consumido só por `ServiceFactory.ts`/`AuthServiceFactory.ts`.
+`DATA_SOURCE` e `AUTH_MODE` são lidas uma vez em build-time por `scripts/generate-runtime-config.mjs` (a SPA é estática, sem servidor a cada pedido) e gravadas em `webapp/service/runtimeConfig.generated.ts`, consumido só por `ServiceFactory.ts`/`AuthServiceFactory.ts`. `TELEMETRY_MODE` segue o mesmo padrão, derivado de `OTEL_EXPORTER_OTLP_ENDPOINT` (vazio = `console`).
 
 ## Deploy em Vercel
 
 - Build: `npm run build` (output `dist/`).
 - Funções serverless em `/api`.
-- `vercel.json` define cabeçalhos de segurança (CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Strict-Transport-Security`) e cache longo para `resources/**` vs. curto para `index.html`/`manifest.json`.
+- `vercel.json` define cabeçalhos de segurança (CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Strict-Transport-Security`, `X-Frame-Options`, `Permissions-Policy`), `Cache-Control: no-store` nas respostas de `/api/*`, e cache longo para `resources/**` vs. curto para `index.html`/`manifest.json`.
 - **Nota sobre CSP**: `style-src` inclui `'unsafe-inline'` porque o OpenUI5 define estilos inline diretamente nos elementos DOM durante a renderização de controlos — não há alternativa sem reescrever o motor de renderização da framework. `script-src` **não** inclui `'unsafe-eval'`: não é necessário para esta aplicação.
 - **Importante**: ativa a [Vercel Deployment Protection](https://vercel.com/docs/deployment-protection) neste projeto. Este deployment não deve ficar acessível publicamente — é um mockup de demonstração com dados fictícios, mas ainda assim não é para expor sem proteção.
 
@@ -49,5 +49,5 @@ Ver `.env.example`. Nenhum segredo em código — tudo lido por variável de amb
 
 - `docs/analise-funcional.md` — requisitos, ecrãs, decisões de arquitetura.
 - `docs/modelo-dados.md` — entidades, diagrama Mermaid, regras de anonimato e auto-elogio.
-- `docs/migracao-btp.md` — plano de migração para SAP BTP (chega na fase final).
-- `docs/rastreabilidade-requisitos.md` — rastreabilidade requisito → implementação → testes (chega na fase final).
+- `docs/migracao-btp.md` — plano de migração para SAP BTP.
+- `docs/rastreabilidade-requisitos.md` — rastreabilidade requisito → implementação → testes.

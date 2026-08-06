@@ -3,7 +3,7 @@ export interface TelemetryAttributes {
 }
 
 /**
- * Interface única de telemetria (requisito 9 — relatórios de
+ * Interface única de telemetria (requisito 11 — relatórios de
  * utilização/engagement baseados em OpenTelemetry, ver
  * docs/analise-funcional.md). Instrumenta eventos de negócio — vista de
  * página, pesquisa de colaborador, submissão de reconhecimento, erros —

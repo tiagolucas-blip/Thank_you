@@ -7,7 +7,7 @@ const provider = new BasicTracerProvider({
 const tracer = provider.getTracer("com.xpto.thankyou.api");
 
 /**
- * Instrumentação mínima do lado do servidor (requisito 9 — erros).
+ * Instrumentação mínima do lado do servidor (requisito 11 — erros).
  * Mesma abordagem SDK do lado do webapp (ver
  * webapp/service/telemetry/ConsoleTelemetryService.ts) — em BTP troca-se
  * só o exporter (OTLP HTTP para o SAP Cloud Logging Service), nunca os
