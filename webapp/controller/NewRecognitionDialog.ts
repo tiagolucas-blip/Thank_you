@@ -128,6 +128,7 @@ function flattenCategoryEntries(categories: CategoryEntry[]): CategoryEntry[] {
  */
 export default class NewRecognitionDialog {
     private dialog?: Dialog;
+    private parentView?: View;
     private readonly model: JSONModel;
     private readonly resourceBundle: ResourceBundle;
     private readonly onSubmitted: () => void;
@@ -140,6 +141,7 @@ export default class NewRecognitionDialog {
     }
 
     public async open(parentView: View, employees: Employee[], categories: RecognitionCategory[]): Promise<void> {
+        this.parentView = parentView;
         if (!this.dialog) {
             this.dialog = (await Fragment.load({
                 id: parentView.getId(),
@@ -249,6 +251,7 @@ export default class NewRecognitionDialog {
 
     public async onSubmitPress(_oEvent: Button$PressEvent): Promise<void> {
         if (!this.recomputeValidity()) {
+            this.focusFirstInvalidField();
             return;
         }
 
@@ -366,6 +369,32 @@ export default class NewRecognitionDialog {
         const valid = Boolean(data.recipientId) && Boolean(data.message.trim()) && !result.errors.categoryRatings;
         this.model.setProperty("/isValid", valid);
         return valid;
+    }
+
+    /**
+     * O botão Enviar fica sempre ativo (não usa enabled="{/isValid}") de
+     * propósito: com o dialog scrollável, um botão desativado não dá
+     * nenhuma pista sobre o que falta quando o campo em falta está fora do
+     * ecrã visível — só "não acontece nada" ao clicar. Em vez disso,
+     * recomputeValidity() corre sempre no submit e, se inválido, isto leva
+     * o utilizador diretamente ao primeiro campo por preencher.
+     */
+    private focusFirstInvalidField(): void {
+        const data = this.model.getData() as DialogModelData;
+        let targetId: string | undefined;
+        if (!data.recipientId) {
+            targetId = "recipientInput";
+        } else if (!data.message.trim()) {
+            targetId = "finalMessageArea";
+        } else if (data.categoryRatingError) {
+            targetId = "categoryTabBar";
+        }
+
+        const control = targetId ? this.parentView?.byId(targetId) : undefined;
+        control?.getDomRef()?.scrollIntoView({ behavior: "smooth", block: "center" });
+        control?.focus();
+
+        MessageToast.show(this.resourceBundle.getText("formIncompleteError") ?? "");
     }
 
     private emptyModelData(): DialogModelData {

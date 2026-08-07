@@ -145,7 +145,7 @@
             </VBox>
         </content>
         <buttons>
-            <Button text="{i18n>submitButton}" type="Emphasized" enabled="{/isValid}" press=".onSubmitPress" />
+            <Button text="{i18n>submitButton}" type="Emphasized" press=".onSubmitPress" />
             <Button text="{i18n>cancelButton}" press=".onCancelPress" />
         </buttons>
     </Dialog>
