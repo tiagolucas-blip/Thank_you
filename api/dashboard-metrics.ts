@@ -14,8 +14,8 @@ export default function handler(req: VercelRequest, res: VercelResponse): void {
         const user = getRequestUser(req);
         requireRole(user, "ADMIN");
 
-        const year =
-            typeof req.query.year === "string" ? Number.parseInt(req.query.year, 10) : new Date().getUTCFullYear();
+        const parsedYear = typeof req.query.year === "string" ? Number.parseInt(req.query.year, 10) : NaN;
+        const year = Number.isNaN(parsedYear) ? new Date().getUTCFullYear() : parsedYear;
         const records = listRecognitionRecords();
         const recordsInYear = records.filter((record) => new Date(record.createdAt).getUTCFullYear() === year);
 

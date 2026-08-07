@@ -49,7 +49,7 @@ erDiagram
         string code
         string labelKey
         string answerType
-        string options
+        string[] options
         int order
         boolean active
     }
@@ -139,16 +139,16 @@ Categorias e subcategorias de reconhecimento, dados de configuração — nunca 
 
 Questões fechadas associadas a uma categoria — apresentadas no dialog, dentro do tab da categoria correspondente.
 
-| Campo      | Tipo                            | Nota                                              |
-| ---------- | ------------------------------- | ------------------------------------------------- |
-| id         | string (PK)                     |                                                   |
-| categoryId | string (FK RecognitionCategory) |                                                   |
-| code       | string                          |                                                   |
-| labelKey   | string                          |                                                   |
-| answerType | string                          | `BOOLEAN` \| `SINGLE_CHOICE`                      |
-| options    | string                          | JSON de opções, só relevante para `SINGLE_CHOICE` |
-| order      | int                             |                                                   |
-| active     | boolean                         |                                                   |
+| Campo      | Tipo                            | Nota                              |
+| ---------- | ------------------------------- | --------------------------------- |
+| id         | string (PK)                     |                                   |
+| categoryId | string (FK RecognitionCategory) |                                   |
+| code       | string                          |                                   |
+| labelKey   | string                          |                                   |
+| answerType | string                          | `BOOLEAN` \| `SINGLE_CHOICE`      |
+| options    | string[]                        | Só relevante para `SINGLE_CHOICE` |
+| order      | int                             |                                   |
+| active     | boolean                         |                                   |
 
 ### NotificationMetadata (config)
 

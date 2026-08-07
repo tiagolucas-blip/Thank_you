@@ -12,6 +12,10 @@ import { getRecognitionService } from "../service/ServiceFactory";
 import { getAuthService } from "../service/AuthServiceFactory";
 import { getTelemetryService } from "../service/TelemetryServiceFactory";
 import { setCurrentDemoIdentity } from "../service/DemoUserStore";
+import { setStoredLanguage } from "../service/LanguagePreference";
+import type { SupportedLanguage } from "../service/LanguagePreference";
+import { LatestRequestGuard } from "../model/asyncSequence";
+import { ratingToPercentValue } from "../model/rating";
 import NewRecognitionDialog from "./NewRecognitionDialog";
 import type Component from "../Component";
 import type { CategoryRating, Employee, RecognitionCategory, RecognitionRecordView } from "../service/types";
@@ -29,6 +33,8 @@ export default class Home extends BaseController {
     private categories: RecognitionCategory[] = [];
     private detailDialog?: Dialog;
     private newRecognitionDialog?: NewRecognitionDialog;
+    private readonly receivedSearchGuard = new LatestRequestGuard();
+    private readonly givenSearchGuard = new LatestRequestGuard();
 
     public onInit(): void {
         const oModel = new JSONModel({
@@ -57,6 +63,23 @@ export default class Home extends BaseController {
         setCurrentDemoIdentity(employeeId);
         const oComponent = this.getOwnerComponent() as Component;
         void oComponent.refreshCurrentUser().then(() => this.loadData());
+    }
+
+    /**
+     * A troca de idioma nunca acontece em runtime — sap.base.i18n.Localization
+     * não invalida o ResourceBundle já cacheado em Component.ts (ver o
+     * comentário lá), e recarregar cada texto imperativo em todos os
+     * controllers seria mais frágil do que simplesmente recarregar a
+     * página com a preferência já guardada (aplicada por um script inline
+     * em index.html antes do bootstrap UI5 arrancar).
+     */
+    public onLanguageChange(oEvent: Select$ChangeEvent): void {
+        const language = oEvent.getParameter("selectedItem")?.getKey() as SupportedLanguage | undefined;
+        if (!language) {
+            return;
+        }
+        setStoredLanguage(language);
+        window.location.reload();
     }
 
     public onGoToAdminPress(): void {
@@ -164,23 +187,43 @@ export default class Home extends BaseController {
     }
 
     private async reloadReceived(search: string): Promise<void> {
-        const oModel = this.getHomeModel();
-        const service = await getRecognitionService();
-        const currentUser = await getAuthService().getCurrentUser();
-        const received = await service.getReceivedRecognitions(currentUser.employee.id, search);
-        oModel.setProperty("/received", received);
-        oModel.setProperty("/receivedSearch", search);
-        oModel.setProperty("/kpis/receivedCount", received.length);
+        try {
+            const received = await this.receivedSearchGuard.run(async () => {
+                const service = await getRecognitionService();
+                const currentUser = await getAuthService().getCurrentUser();
+                return service.getReceivedRecognitions(currentUser.employee.id, search);
+            });
+            if (received === undefined) {
+                return;
+            }
+            const oModel = this.getHomeModel();
+            oModel.setProperty("/received", received);
+            oModel.setProperty("/receivedSearch", search);
+            oModel.setProperty("/kpis/receivedCount", received.length);
+        } catch (error) {
+            getTelemetryService().recordError("home_received_search_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private async reloadGiven(search: string): Promise<void> {
-        const oModel = this.getHomeModel();
-        const service = await getRecognitionService();
-        const currentUser = await getAuthService().getCurrentUser();
-        const given = await service.getGivenRecognitions(currentUser.employee.id, search);
-        oModel.setProperty("/given", this.withRecipientNames(given));
-        oModel.setProperty("/givenSearch", search);
-        oModel.setProperty("/kpis/givenCount", given.length);
+        try {
+            const given = await this.givenSearchGuard.run(async () => {
+                const service = await getRecognitionService();
+                const currentUser = await getAuthService().getCurrentUser();
+                return service.getGivenRecognitions(currentUser.employee.id, search);
+            });
+            if (given === undefined) {
+                return;
+            }
+            const oModel = this.getHomeModel();
+            oModel.setProperty("/given", this.withRecipientNames(given));
+            oModel.setProperty("/givenSearch", search);
+            oModel.setProperty("/kpis/givenCount", given.length);
+        } catch (error) {
+            getTelemetryService().recordError("home_given_search_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private async openDetailDialog(record: RecognitionRecordView, direction: "received" | "given"): Promise<void> {
@@ -251,7 +294,7 @@ export default class Home extends BaseController {
         return {
             receivedCount: received.length,
             givenCount: given.length,
-            averagePercent: Math.round((averageRating / 5) * 1000) / 10
+            averagePercent: ratingToPercentValue(averageRating)
         };
     }
 

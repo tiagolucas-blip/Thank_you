@@ -12,6 +12,7 @@ import { getAuthService } from "../AuthServiceFactory";
 import { toAuthorView } from "../anonymize";
 import { isSelfRecognition } from "../validation";
 import { ServiceError } from "../errors";
+import { ratingToPercentValue } from "../../model/rating";
 import { employees } from "../../localService/mockdata/employees";
 import { employeeExclusions } from "../../localService/mockdata/employeeExclusions";
 import { recognitionCategoriesFlat } from "../../localService/mockdata/recognitionCategories";
@@ -203,7 +204,7 @@ export default class MockRecognitionService implements IRecognitionService {
             year,
             totalRecognitions,
             averageRating: Math.round(averageRating * 10) / 10,
-            averageRatingPercent: Math.round((averageRating / 5) * 1000) / 10,
+            averageRatingPercent: ratingToPercentValue(averageRating),
             activeUsers: employees.filter((employee) => employee.active).length,
             topCategoriesByRating,
             recognitionsByMonth

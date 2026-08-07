@@ -5,6 +5,6 @@
     displayBlock="true"
 >
     <Shell id="shell">
-        <App id="app" busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}" />
+        <App id="app" />
     </Shell>
 </mvc:View>

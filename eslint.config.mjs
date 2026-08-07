@@ -16,6 +16,10 @@ export default tseslint.config(
         languageOptions: {
             globals: {
                 ...globals.browser
+            },
+            parserOptions: {
+                project: ["./tsconfig.json"],
+                tsconfigRootDir: import.meta.dirname
             }
         },
         rules: {
@@ -24,7 +28,15 @@ export default tseslint.config(
             "ui5/no-for-in": "error",
             "ui5/no-boolean-literal-compare": "warn",
             "no-console": "warn",
-            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }]
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+            // Regras conscientes de tipos, ligadas cirurgicamente (não o
+            // preset recommendedTypeChecked completo): apanham promises
+            // esquecidas sem .catch nem "void" explícito — a classe de bug
+            // encontrada na auditoria (pesquisas "ao vivo" sem tratamento
+            // de erro). "void expr" continua aceite como descarte
+            // intencional (ignoreVoid é o default desta regra).
+            "@typescript-eslint/no-floating-promises": "error",
+            "@typescript-eslint/no-misused-promises": "error"
         }
     },
     {
@@ -33,11 +45,17 @@ export default tseslint.config(
         languageOptions: {
             globals: {
                 ...globals.node
+            },
+            parserOptions: {
+                project: ["./tsconfig.api.json"],
+                tsconfigRootDir: import.meta.dirname
             }
         },
         rules: {
             "no-console": "warn",
-            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }]
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+            "@typescript-eslint/no-floating-promises": "error",
+            "@typescript-eslint/no-misused-promises": "error"
         }
     },
     {

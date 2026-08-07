@@ -50,13 +50,31 @@ export const DEMO_IDENTITIES: DemoIdentity[] = [
 export function getCurrentDemoIdentity(): DemoIdentity {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     if (stored) {
-        const storedEmployeeId = JSON.parse(stored) as { employeeId: string };
-        const found = DEMO_IDENTITIES.find((identity) => identity.employee.id === storedEmployeeId.employeeId);
+        const found = parseStoredIdentity(stored);
         if (found) {
             return { role: found.role, employee: { ...found.employee } };
         }
     }
     return { role: DEMO_IDENTITIES[0].role, employee: { ...DEMO_IDENTITIES[0].employee } };
+}
+
+/**
+ * sessionStorage é editável fora da app (devtools, extensões) — um
+ * JSON.parse sem proteção partiria getCurrentDemoIdentity() (chamado em
+ * todo o arranque, ver Component.ts) com um valor corrompido. Trata
+ * qualquer conteúdo inválido como "sem identidade guardada", nunca como
+ * erro fatal.
+ */
+function parseStoredIdentity(stored: string): DemoIdentity | undefined {
+    try {
+        const parsed = JSON.parse(stored) as { employeeId?: unknown };
+        if (typeof parsed.employeeId !== "string") {
+            return undefined;
+        }
+        return DEMO_IDENTITIES.find((identity) => identity.employee.id === parsed.employeeId);
+    } catch {
+        return undefined;
+    }
 }
 
 export function setCurrentDemoIdentity(employeeId: string): void {

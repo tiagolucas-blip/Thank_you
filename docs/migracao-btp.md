@@ -150,7 +150,7 @@ entity ClosedQuestion : managed {
         code       : String;
         labelKey   : String;
         answerType : String enum { BOOLEAN; SINGLE_CHOICE; };
-        options    : String; // JSON — ver docs/modelo-dados.md
+        options    : array of String; // lista pequena e fixa (3 valores) — não JSON, ver docs/modelo-dados.md
         order      : Integer;
         active     : Boolean;
 }

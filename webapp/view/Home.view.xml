@@ -11,6 +11,17 @@
             <OverflowToolbar id="homeHeaderBar">
                 <Title text="{i18n>appTitle}" level="H1" />
                 <ToolbarSpacer />
+                <Select
+                    id="languageSelect"
+                    selectedKey="{app>/currentLanguage}"
+                    change=".onLanguageChange"
+                    ariaLabelledBy="languageSelectLabel"
+                    width="9rem"
+                >
+                    <core:Item key="pt" text="Português" />
+                    <core:Item key="en" text="English" />
+                    <core:Item key="fr_FR" text="Français" />
+                </Select>
                 <ObjectStatus text="{i18n>demoModeNotice}" state="Warning" visible="{app>/isDemoMode}" />
                 <Select
                     id="demoUserSelect"
@@ -41,6 +52,7 @@
         <content>
             <VBox class="sapUiResponsiveMargin" id="homeContent">
                 <Label id="demoUserSelectLabel" text="{i18n>demoUserSelectLabel}" visible="false" />
+                <Label id="languageSelectLabel" text="{i18n>languageSelectLabel}" visible="false" />
 
                 <!-- Top Performers -->
                 <Title text="{i18n>topPerformersTitle}" level="H2" class="sapUiSmallMarginBottom" />

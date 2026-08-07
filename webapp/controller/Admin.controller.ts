@@ -8,6 +8,7 @@ import { getRecognitionService } from "../service/ServiceFactory";
 import { getAuthService } from "../service/AuthServiceFactory";
 import { getTelemetryService } from "../service/TelemetryServiceFactory";
 import { buildBarChart, buildDonutChart } from "../model/charts";
+import { LatestRequestGuard } from "../model/asyncSequence";
 import type { DashboardMetrics, RecognitionRecordView, TopPerformerEntry } from "../service/types";
 
 const CATEGORY_CHART_COLORS = [
@@ -30,6 +31,7 @@ interface CategoryLegendEntry {
  */
 export default class Admin extends BaseController {
     private monthFormatter = DateFormat.getDateInstance({ pattern: "MMM" });
+    private readonly recentSearchGuard = new LatestRequestGuard();
 
     public onInit(): void {
         const currentYear = new Date().getUTCFullYear();
@@ -51,7 +53,9 @@ export default class Admin extends BaseController {
             recentSearch: ""
         });
         this.getView()?.setModel(oModel, "admin");
-        this.getRouter().getRoute("admin")?.attachMatched(this.onRouteMatched, this);
+        this.getRouter()
+            .getRoute("admin")
+            ?.attachMatched(() => void this.onRouteMatched(), this);
     }
 
     public onBackPress(): void {
@@ -91,6 +95,9 @@ export default class Admin extends BaseController {
         oModel.setProperty("/busy", true);
 
         try {
+            // Cada loader trata os seus próprios erros (toast + telemetria)
+            // e nunca rejeita — uma falha isolada (ex.: só o gráfico de
+            // categorias) não impede os outros dois de carregar.
             await Promise.all([
                 this.loadDashboard(Number.parseInt(oModel.getProperty("/selectedYear") as string, 10)),
                 this.loadTopPerformers(),
@@ -106,32 +113,52 @@ export default class Admin extends BaseController {
     }
 
     private async loadTopPerformers(): Promise<void> {
-        const service = await getRecognitionService();
-        const topPerformers: TopPerformerEntry[] = await service.getTopPerformers();
-        this.getAdminModel().setProperty("/topPerformers", topPerformers);
+        try {
+            const service = await getRecognitionService();
+            const topPerformers: TopPerformerEntry[] = await service.getTopPerformers();
+            this.getAdminModel().setProperty("/topPerformers", topPerformers);
+        } catch (error) {
+            getTelemetryService().recordError("admin_top_performers_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private async loadRecent(search: string): Promise<void> {
-        const service = await getRecognitionService();
-        const recent: RecognitionRecordView[] = await service.getRecentRecognitions(search);
-        const oModel = this.getAdminModel();
-        oModel.setProperty("/recentRecognitions", recent);
-        oModel.setProperty("/recentSearch", search);
+        try {
+            const recent = await this.recentSearchGuard.run<RecognitionRecordView[]>(async () => {
+                const service = await getRecognitionService();
+                return service.getRecentRecognitions(search);
+            });
+            if (recent === undefined) {
+                return;
+            }
+            const oModel = this.getAdminModel();
+            oModel.setProperty("/recentRecognitions", recent);
+            oModel.setProperty("/recentSearch", search);
+        } catch (error) {
+            getTelemetryService().recordError("admin_recent_search_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private async loadDashboard(year: number): Promise<void> {
-        const service = await getRecognitionService();
-        const metrics: DashboardMetrics = await service.getDashboardMetrics(year);
-        const oModel = this.getAdminModel();
+        try {
+            const service = await getRecognitionService();
+            const metrics: DashboardMetrics = await service.getDashboardMetrics(year);
+            const oModel = this.getAdminModel();
 
-        oModel.setProperty("/kpis", {
-            totalRecognitions: metrics.totalRecognitions,
-            totalAveragePercent: metrics.averageRatingPercent,
-            activeUsers: metrics.activeUsers
-        });
+            oModel.setProperty("/kpis", {
+                totalRecognitions: metrics.totalRecognitions,
+                totalAveragePercent: metrics.averageRatingPercent,
+                activeUsers: metrics.activeUsers
+            });
 
-        this.applyCategoryChart(metrics);
-        this.applyMonthChart(metrics);
+            this.applyCategoryChart(metrics);
+            this.applyMonthChart(metrics);
+        } catch (error) {
+            getTelemetryService().recordError("admin_dashboard_metrics_failed", error);
+            MessageToast.show(this.getResourceBundle().getText("dataLoadFailedError") ?? "");
+        }
     }
 
     private applyCategoryChart(metrics: DashboardMetrics): void {

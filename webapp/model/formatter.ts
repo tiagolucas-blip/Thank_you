@@ -1,4 +1,5 @@
 import DateFormat from "sap/ui/core/format/DateFormat";
+import { ratingToPercentValue } from "./rating";
 
 /** Iniciais a partir do nome (ex.: "Ana Ferreira" -> "AF"), para o Avatar quando não há foto. */
 export function initials(name: string | undefined): string {
@@ -27,7 +28,7 @@ export function ratingToPercent(rating: number | undefined): string {
     if (rating === undefined || rating === null) {
         return "0%";
     }
-    return `${Math.round((rating / 5) * 1000) / 10}%`;
+    return `${ratingToPercentValue(rating)}%`;
 }
 
 let dateFormatter: DateFormat | undefined;

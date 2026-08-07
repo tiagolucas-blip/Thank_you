@@ -14,6 +14,7 @@ import { getRecognitionService } from "../service/ServiceFactory";
 import { validateRecognitionForm } from "../service/validation";
 import { ServiceError } from "../service/errors";
 import { getTelemetryService } from "../service/TelemetryServiceFactory";
+import { LatestRequestGuard } from "../model/asyncSequence";
 import type {
     ClosedQuestion,
     Employee,
@@ -132,6 +133,7 @@ export default class NewRecognitionDialog {
     private readonly model: JSONModel;
     private readonly resourceBundle: ResourceBundle;
     private readonly onSubmitted: () => void;
+    private readonly suggestGuard = new LatestRequestGuard();
     private selectedEmployeeName = "";
 
     constructor(resourceBundle: ResourceBundle, onSubmitted: () => void) {
@@ -308,15 +310,25 @@ export default class NewRecognitionDialog {
     }
 
     private async refreshSuggestions(search: string, orgArea: string): Promise<void> {
-        const service = await getRecognitionService();
-        const suggestions = await service.searchEmployees({ search, orgArea: orgArea || undefined });
-        this.model.setProperty("/employeeSuggestions", suggestions);
-
-        if (search) {
-            getTelemetryService().recordEvent("employee_search", {
-                queryLength: search.length,
-                resultCount: suggestions.length
+        try {
+            const suggestions = await this.suggestGuard.run(async () => {
+                const service = await getRecognitionService();
+                return service.searchEmployees({ search, orgArea: orgArea || undefined });
             });
+            if (suggestions === undefined) {
+                return;
+            }
+            this.model.setProperty("/employeeSuggestions", suggestions);
+
+            if (search) {
+                getTelemetryService().recordEvent("employee_search", {
+                    queryLength: search.length,
+                    resultCount: suggestions.length
+                });
+            }
+        } catch (error) {
+            getTelemetryService().recordError("employee_search_failed", error);
+            MessageToast.show(this.resourceBundle.getText("dataLoadFailedError") ?? "");
         }
     }
 

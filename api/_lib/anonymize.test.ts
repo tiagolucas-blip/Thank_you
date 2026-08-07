@@ -30,7 +30,7 @@ function baseRecord(overrides: Partial<RecognitionRecord> = {}): RecognitionReco
     };
 }
 
-test("requisito 4 — authorId nunca é serializado quando isAnonymous=true", () => {
+void test("requisito 4 — authorId nunca é serializado quando isAnonymous=true", () => {
     const record = baseRecord({ isAnonymous: true });
     const view = toRecognitionRecordView(record, employeesById);
 
@@ -39,7 +39,7 @@ test("requisito 4 — authorId nunca é serializado quando isAnonymous=true", ()
     assert.ok(!JSON.stringify(view).includes(author.id), "o id do autor não aparece na serialização");
 });
 
-test("requisito 4 — author é populado quando isAnonymous=false", () => {
+void test("requisito 4 — author é populado quando isAnonymous=false", () => {
     const record = baseRecord({ isAnonymous: false });
     const view = toRecognitionRecordView(record, employeesById);
 
@@ -47,7 +47,7 @@ test("requisito 4 — author é populado quando isAnonymous=false", () => {
     assert.strictEqual(view.author?.name, author.name);
 });
 
-test("record.authorId (armazenamento) mantém-se sempre, independentemente de isAnonymous", () => {
+void test("record.authorId (armazenamento) mantém-se sempre, independentemente de isAnonymous", () => {
     const record = baseRecord({ isAnonymous: true });
     assert.strictEqual(record.authorId, author.id, "o storage nunca apaga authorId — só a view o omite");
 });
