@@ -8,7 +8,7 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import type { Input$SuggestEvent, Input$SuggestionItemSelectedEvent } from "sap/m/Input";
 import type { InputBase$ChangeEvent } from "sap/m/InputBase";
 import type { Select$ChangeEvent } from "sap/m/Select";
-import type { RatingIndicator$LiveChangeEvent } from "sap/m/RatingIndicator";
+import type { RatingIndicator$ChangeEvent } from "sap/m/RatingIndicator";
 import type { Button$PressEvent } from "sap/m/Button";
 import { getRecognitionService } from "../service/ServiceFactory";
 import { validateRecognitionForm } from "../service/validation";
@@ -196,7 +196,17 @@ export default class NewRecognitionDialog {
         void this.refreshSuggestions((this.model.getProperty("/recipientSearch") as string) ?? "", key);
     }
 
-    public onCategoryRatingChange(oEvent: RatingIndicator$LiveChangeEvent): void {
+    /**
+     * Só "change" (nunca "liveChange"): o RatingIndicator trata "clicar na
+     * mesma estrela já selecionada" como limpar para 0. Se escrevêssemos
+     * no modelo já no liveChange (que dispara ainda no mousedown, antes de
+     * soltar o rato), o valor "prévia" fica confirmado por two-way binding
+     * antes do mouseup correr essa comparação — todo o primeiro clique
+     * parece "repetido" e o rating volta sempre a 0. "change" já dispara
+     * tanto no rato (mouseup) como no teclado (setas), por isso cobre os
+     * dois sem este efeito secundário.
+     */
+    public onCategoryRatingChange(oEvent: RatingIndicator$ChangeEvent): void {
         const source = oEvent.getSource() as Control;
         const path = source.getBindingContext()?.getPath();
         const value = oEvent.getParameter("value") ?? 0;

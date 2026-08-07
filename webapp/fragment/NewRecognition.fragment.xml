@@ -57,7 +57,6 @@
                                         value="{rating}"
                                         maxValue="5"
                                         tooltip="{path: 'labelKey', formatter: '.formatCategoryRatingTooltip'}"
-                                        liveChange=".onCategoryRatingChange"
                                         change=".onCategoryRatingChange"
                                     />
                                     <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
@@ -98,7 +97,6 @@
                                                 value="{rating}"
                                                 maxValue="5"
                                                 tooltip="{path: 'labelKey', formatter: '.formatCategoryRatingTooltip'}"
-                                                liveChange=".onCategoryRatingChange"
                                                 change=".onCategoryRatingChange"
                                             />
                                             <Text text="{path: 'rating', formatter: 'formatter.ratingWithMax'}" />
