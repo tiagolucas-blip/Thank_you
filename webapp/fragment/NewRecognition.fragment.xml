@@ -21,6 +21,7 @@
                     value="{/recipientSearch}"
                     placeholder="{i18n>selectEmployeePlaceholder}"
                     showSuggestion="true"
+                    startSuggestion="0"
                     suggestionItems="{/employeeSuggestions}"
                     suggest=".onEmployeeSuggest"
                     suggestionItemSelected=".onEmployeeSelected"
