@@ -135,6 +135,12 @@ export default class NewRecognitionDialog {
     private readonly onSubmitted: () => void;
     private readonly suggestGuard = new LatestRequestGuard();
     private selectedEmployeeName = "";
+    // Guarda o último valor conhecido de cada RatingIndicator (por
+    // caminho de binding) para detetar quando um clique limpa uma
+    // classificação já feita — não dá para ler isto de volta do modelo
+    // dentro de onCategoryRatingChange porque a binding TwoWay já
+    // escreveu o valor novo antes do evento "change" disparar.
+    private lastKnownCategoryRating = new Map<string, number>();
 
     constructor(resourceBundle: ResourceBundle, onSubmitted: () => void) {
         this.resourceBundle = resourceBundle;
@@ -155,6 +161,7 @@ export default class NewRecognitionDialog {
         }
 
         this.selectedEmployeeName = "";
+        this.lastKnownCategoryRating.clear();
         const orgAreaOptions = this.buildOrgAreaOptions(employees);
 
         this.model.setData({
@@ -215,8 +222,21 @@ export default class NewRecognitionDialog {
         const path = source.getBindingContext()?.getPath();
         const value = oEvent.getParameter("value") ?? 0;
         if (path) {
+            const previousValue = this.lastKnownCategoryRating.get(path) ?? 0;
             this.model.setProperty(`${path}/rating`, value);
             this.recomputeValidity();
+            // Clicar na estrela já selecionada limpa-a para 0 (comportamento
+            // nativo do RatingIndicator, reaproveitado como forma de
+            // "desclassificar" uma categoria) — mas isso acontece sem
+            // qualquer aviso visual imediato. Um clique a mais para
+            // confirmar/hesitar, gesto comum, apagava a classificação sem o
+            // utilizador reparar, só descobrindo no erro genérico do Enviar
+            // (bug real reportado por utilizador, reproduzido com clique
+            // duplo na mesma estrela via Playwright).
+            if (value === 0 && previousValue > 0) {
+                MessageToast.show(this.resourceBundle.getText("categoryRatingClearedWarning") ?? "");
+            }
+            this.lastKnownCategoryRating.set(path, value);
         }
     }
 
